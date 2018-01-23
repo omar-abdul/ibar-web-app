@@ -1,0 +1,33 @@
+
+
+.form_bg {
+    background-color:#fff;
+    color:#666;
+    padding:20px;
+    border-radius:5px;
+    position: absolute;
+    border:1px solid #fff;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 320px;
+    height: 350px;
+    
+}
+.align-center {
+    text-align:center;
+}
+.bg-grey{
+  background-size: cover;
+  background-color: #f9f9f9;
+  height:100vh;
+  justify-content:center;
+
+}
+
+.submit-btn
+{
+  background-color: rgb(9, 72, 245);
+}

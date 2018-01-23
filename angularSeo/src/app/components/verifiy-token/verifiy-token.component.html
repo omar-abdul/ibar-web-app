@@ -1,0 +1,31 @@
+<div class="bg-grey ">
+    <div class="container">
+
+    <div class="row ">
+
+
+<form class="form_bg" (submit)="confirmToken()">
+    <div class="alert alert-danger" *ngIf=!verified>
+   <p>{{message}}</p>
+   </div>
+    <h6 class="text-center">Copy and paste your token from your email</h6>
+   <br/>
+  
+   <div class="input-group">
+     
+
+       <span class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></span><input type="text" class="form-control" [(ngModel)]="token"  required minlength="8" name="tok"  required minlength="8" >
+   
+   
+</div>
+<br/>
+    
+<div *ngIf ="isLoading" class="text-center" style="z-index: 9999"><img class="rolling" src ="/assets/images/Rolling.gif"></div>
+   <div class="align-center">
+       <button type="submit" class="btn submit-btn">Next</button>
+       </div>
+   
+</form>
+</div>
+</div>
+</div>

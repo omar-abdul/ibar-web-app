@@ -1,0 +1,17 @@
+
+SERVER SIDE
+1. Authenticate user and sign token with short life. (15 minutes)
+2. save a refresh token with random integer in(redis) database with user id and
+   send it in signed cookie.
+3.cookie must be httpOnly.
+
+4. send xsrf token to prevent csruf attack.
+5. check if sent token in authorization header is not expired. 
+6. if expired get the cookie with id and check against the database.
+7. if exists issue new token and send.
+
+
+CLIENT SIDE.
+1. read info from jwt and store in local storage. 
+2. keep sending requests using withCredentials  set to true.
+3. 

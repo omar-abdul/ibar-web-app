@@ -1,0 +1,107 @@
+
+
+ <header id="cover">
+ 	<div class="header-text fadeIn ">
+ 		<h2>  #1 choice for finding Somali teachers </h2>
+	 </div>
+	 <ng-template #rt let-r="result" let-t="term">
+		{{ r.name}}
+	  </ng-template>
+	  
+ 	<form  [formGroup]="searchForm" (submit)="onLocationSubmit()" class="form-inline" >
+    <div class="input-group">
+      <input type="text" class="form-control" size="50" placeholder="Enter a city" autocorrect="off" autocapitalize="off" spellcheck="off" #search formControlName="city" />
+      <br>
+  </div>
+  <div class="input-group">
+	<input id="typeahead-basic" type="text" class="form-control"  [(ngModel)]="model"
+	[ngbTypeahead]="searchSub" placeholder="Enter subject name"  formControlName="subject"  />
+
+		 
+  </div>
+  
+      <div id="center-fluid">
+      <button type="submit" class="btn btn-primary" id="quick_search">Quick Search</button>
+  
+    </div>
+  </form>
+ </header>
+ <div #about id="about"  class="container-fluid">
+
+<h1> What we do </h1>
+	<div class="row ">
+		
+		<div class="col-sm-8">
+
+	
+	<p class="text-center aboutText">We help you find the right mentor from our list of skilled teachers 
+	to take your learning-journey to the next step. Easily find teachers that are close
+to your city and start right away!</p>
+
+	
+	</div>
+	<div class="col-sm-4">
+		<img src="/assets/images/wise_owl.jpg" width="300" height="300" style="object-fit: cover;">
+	</div>
+</div>
+</div>
+
+
+<div #values id="values" class="container-fluid text-center bg-grey">
+<h1> Our Mottos</h1>
+<br>
+<div class="row">
+
+	<div class="col-sm-4">
+		<span><img src="/assets/images/time.png"/></span>
+		<h4> Prompt</h4>
+		<p>We value your time and make sure you get the best out of it</p>
+	</div>
+	<div class="col-sm-4">
+		<span><img src="/assets/images/money.png"/></span>
+		<h4> Affordable</h4>
+		<p>Affordable price for a quality mentor</p>
+	</div>
+	<div class="col-sm-4">
+		<span><img src="/assets/images/tick.png"/></span>
+		<h4>Outcome</h4>
+		<p>Impeccable results</p>
+	</div>
+</div>
+</div>
+<div  id="works"  class="container-fluid">
+
+
+		<div class="row ">
+				<div class="col-sm-4">
+						<img src="/assets/images/wise_owl.jpg" width="300" height="300" style="object-fit: cover;">
+					</div>
+
+			<div class="col-sm-8">
+					<h1> Here is how it works </h1>
+		
+		<p class="text-center aboutText">Search for mentors in your city with the subject of your choice 
+			Ibar will return closest mentors to your respective city and subject of choice
+	
+		
+		</div>
+
+	</div>
+	</div>
+	<div  class="container-fluid bg-grey">
+
+			<div class="row">
+			
+				<div class="col-sm-8">
+					<h1> Easy pay</h1>
+					<p class="text-center aboutText"> Easily pay with Zaad, Register your number and get in touch with your new Mentor! </p>
+				</div>
+
+			</div>
+			</div>
+
+			<div  class="container-fluid text-center">
+					<h1> Start learning</h1>
+					<p class="aboutText">Simple as A B C, what are you waiting for? </p>
+
+					</div>

@@ -1,0 +1,138 @@
+.container-fluid
+{
+	padding: 50px 5px;
+	height:100%;
+
+}
+.profile .profile-bg
+{
+	background-color: rgba(0,0,0,0.8);
+	min-height: 500px;
+
+	
+
+}
+.profile .center-cropped{
+  object-fit: cover;
+
+}
+.profile
+{
+	margin:auto;
+	padding: 10px;
+	position: relative;
+	min-height:100%; 
+	z-index:3;
+
+}
+.pic {
+  border-radius: 50%;
+  background-color: #cccccc;
+  width: 2em;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #ffffff;
+  box-shadow: 0px 0px 6px rgba(20, 20, 20, 0.6);
+}
+.profile-image
+{
+	padding: 10px;
+	text-align: center;
+
+
+}
+.styleInvisible
+{
+	display: none;
+}
+.styleVisible
+{
+	display: block;
+}
+
+
+.profile-info h4{
+	font-size: 1.2em;
+	box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2);
+	padding: 10px;
+
+
+}
+.profile-info p
+{
+	margin:20px;
+	
+}
+.hirebtn {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 10px;
+    color: white;
+    margin :5px;
+    background-color: rgb(255, 140, 8);
+    cursor: pointer;
+    font-size: 18px;
+	border-radius: 4px;
+	text-decoration-line: none;
+
+
+
+}
+
+
+
+.profile-info
+
+{
+	
+	margin:40px auto auto auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width:75%;
+
+
+
+}
+a.edit{
+	cursor: pointer;
+	color: #4FC3F7;
+
+	padding: 5px;
+	text-decoration: none;
+	
+
+}
+
+.profile ul{
+	list-style: none;
+	padding: 5px;
+	width: 150px;
+
+}
+
+.profile  li a
+{
+	font-size: 1.1em;
+
+	color:#fff;
+	padding: 8px 16px;
+
+	display: block;
+
+}
+.profile .profile-link a:hover ,
+.profile .profile-link a:focus
+{
+	background-color: #4FC3F7;
+	cursor:pointer;
+}
+
+a.active
+{
+	background-color: #4FC3F7;
+}

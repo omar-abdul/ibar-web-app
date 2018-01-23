@@ -1,0 +1,110 @@
+.container-fluid
+{
+	min-height: 100%;
+	padding:50px 5px;
+}
+
+h2{
+	color:black;
+} 
+
+.detail
+{
+	margin:auto;
+	padding-top: 10px;
+	position: relative;
+}
+.detail-image
+{
+	
+		padding: 10px;
+		text-align: center;
+	
+	
+	}
+
+
+
+.center-cropped{
+    object-fit: cover;
+
+}
+.detail-bg
+{
+	/*box-shadow: 4px 0 0 0 rgba(0, 0, 0, 0.2);*/
+
+	background-color: rgba(0,0,0,0.8);
+	color:#fff;
+	min-height: 500px;
+
+
+}
+
+.detail h3 
+{
+	font-size: 1.2em;
+	padding: 0;
+}
+
+.detail-info 
+{
+
+	
+	margin:20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+
+}
+.detail-name
+{
+	margin: 20px auto;
+	padding: 30px;
+}
+
+.title
+{
+	box-shadow: 0 4px 6px 0 rgba(0,0,0,0.2);
+
+
+
+}
+.title h2
+{
+	margin-left: 10px;
+	font-size: 1.4em;
+
+
+}
+
+.detail-info p {
+	padding: 10px;
+
+}
+
+.pic {
+  border-radius: 50%;
+  background-color: #cccccc;
+  width: 2em;
+  height: 2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #ffffff;
+  box-shadow: 0px 0px 6px rgba(20, 20, 20, 0.6);
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.hire-btn 
+{
+	padding: 10px;
+	float: right;
+	
+	color:#fff;
+	cursor: pointer;
+	max-width: 50%;
+	background-color: rgb(24, 8, 255);
+}

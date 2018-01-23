@@ -1,0 +1,58 @@
+
+
+
+ <nav class="navbar navbar-expand-md  navbar-light  navbar-bg">
+  <div class="container ">
+
+
+      <a class="navbar-brand" [routerLink]="['/']" (click)="navbarCollapsed=true" >
+       
+            <img src="/assets/images/logo.png" class="brand">
+
+      </a>
+      <button class="navbar-toggler  navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed" [attr.aria-expanded]="!navbarCollapsed" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation"> 
+      <!--   <span class="navbar-toggler-icon"></span> -->
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed" id="navbarContent">
+
+        <ul class="nav navbar-nav mr-auto">
+
+
+           
+       
+        </ul>
+         <ul class="navbar-nav  ml-auto">
+            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+                <a class="nav-link" [routerLink]="['/']">Home</a>
+              </li>
+            <li *ngIf="!authService.isMentor()" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" >
+                <a class="nav-link" [routerLink]="['/services']">What we offer</a>
+              </li>
+
+
+              <li *ngIf="!authService.loggedIn()" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+                <a class="nav-link" [routerLink]="['/register']">Become a Mentor</a>
+              </li>
+               <li *ngIf="!authService.loggedIn()" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" >
+                <a class="nav-link" [routerLink]="['/register-student']">Become  a Student</a>
+              </li>
+    
+
+          <li *ngIf="authService.loggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+            <a class= "nav-link"  routerLink="/profile"> Dashboard</a>
+          </li>          
+
+          <li *ngIf="!authService.loggedIn()"  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" >
+            <a class= "nav-link "[routerLink]="['/login']"> Login </a>
+          </li>
+          
+           <li *ngIf="authService.loggedIn()" >
+            <a class= "nav-link" (click)="onLogOutClick()" href="#"> Logout</a>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </nav>
+    

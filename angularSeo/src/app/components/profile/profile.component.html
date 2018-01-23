@@ -1,0 +1,126 @@
+<div class="container-fluid">
+	<div class="profile ">
+		<div class="row">
+			<div class="profile-bg">
+			<div class="col-sm-3" >
+
+				<div class="profile-image">
+					
+					<div class="pic" *ngIf="!imageurl">
+							
+
+						{{user?.initial}}
+						
+					</div>
+					
+					<ng-container *ngIf="imageurl">
+<img  class="center-cropped" [src] = 'imageurl' width="200" height="200" style="border-radius: 50%">
+					
+					</ng-container>
+
+
+					</div>
+					<ul>
+
+					<li class="profile-link"><a (click)="showProfile=true">Profile</a></li>
+					<li  *ngIf="authService.isMentor()" class="profile-link"><a (click)="getJobHistory()" >Job History</a></li>
+					<li  *ngIf="!authService.isMentor()" class="profile-link"><a (click)="getJobHistory()" >Mentor History</a></li>
+					</ul>
+		</div>
+	</div>
+
+
+	
+
+<div class="col-sm-9">
+				<div  *ngIf="showProfile" class="profile-info ">
+				<a  class="edit" routerLink="/profile/edit"> Edit Profile</a>
+				<div *ngIf ="isLoading" style="z-index: 9999; "><img  class="middle-rolling" src ="/assets/images/Rolling.gif" style="max-width:50%;"></div>
+			
+					<h4>Name</h4> <p #name>{{user?.name}}</p>
+					<h4>Phone Number</h4>	<p #phoneNumber>{{user?.phone_number}}</p>
+					<ng-container *ngIf="authService.isMentor()"> <h4>City</h4> <p #location> {{user?.city_name}}</p></ng-container>
+					<ng-container *ngIf="authService.isMentor()"><h4>About</h4><p #about>{{user?.about}}</p></ng-container>
+					
+					
+			
+			
+			</div>
+			<div  *ngIf="!showProfile && authService.isMentor()" class="profile-info ">
+				<div class="table-responsive" *ngIf = "jobs">
+					<table class="table">
+						<thead>
+								<tr>
+										<th>Student Name</th>
+										
+									
+										
+									</tr>
+									
+									
+								
+						</thead>
+						<tbody *ngFor="let j of jobs">
+							<tr>
+								<td>{{j?.student_name}}</td>
+								
+								
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+				<div *ngIf = "!isHistory" class="text-center">
+					<h1>No job history found</h1>
+				</div>
+
+
+
+
+			</div>
+			<div  *ngIf="!showProfile && !authService.isMentor()" class="profile-info ">
+					<div class="table-responsive" *ngIf = "jobs">
+						<table class="table">
+							<thead>
+									<tr>
+											<th>Mentor Name</th>
+											
+											<th> </th>
+											
+										</tr>
+										
+										
+									
+							</thead>
+							<tbody *ngFor="let j of jobs">
+								<tr>
+									<td>{{j?.mentor_name}}</td>
+									
+									
+									
+										<td><a class="hirebtn" routerLink="/mentor/{{j?.mentor_id}}" >View more</a></td>
+								</tr>
+							</tbody>
+						</table>
+	
+					</div>
+					<div *ngIf = "!isHistory" class="text-center">
+						<h1>No mentor history found</h1>
+					</div>
+	
+	
+	
+	
+				</div>			
+	
+</div>
+
+	
+
+
+	
+		</div>
+	</div>
+
+
+</div>
