@@ -1,79 +1,104 @@
 <div class="container-fluid">
-	<div class="detail">
-		<div class="row">
-				<div *ngIf ="isLoading"><img class="middle-rolling" src ="/assets/images/Rolling.gif"></div>
+  <div class="detail">
+    <div class="row">
+      <div *ngIf="isLoading">
+        <img class="middle-rolling" src="/assets/images/Rolling.gif">
+      </div>
 
-			<div class="detail-bg">
+      <div class="detail-bg">
 
-			<div class="col-sm-3">
-				<div class="detail-image">
-					
-<img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
-					
-					
-					<ng-container >
-						<div *ngIf="!imageurl" class="pic">
-						{{mentor?.initial}}
-						</div>
-					
-					</ng-container>
-					<div class="detail-name">{{mentor?.name}}</div>	
-				</div>			
-				
-			</div>
-			
-		
+        <div class="col-sm-3">
+          <div class="detail-image">
+
+            <img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
 
 
+            <ng-container>
+              <div *ngIf="!imageurl" class="pic">
+                {{mentor?.initial}}
+              </div>
 
-				
-			</div>
-			
-		
+            </ng-container>
+            <div class="detail-name">{{mentor?.name}}</div>
+           
+          </div>
 
-			<div class="col-sm-9">
-					<div *ngIf='showNumber' class="alert alert-info">{{message}}</div>
-				<div class="detail-info">
+        </div>
 
-					<div class="title">
-						<h2> About </h2>
-						
-					</div>
-					<div>
-						<p>{{mentor?.about}}</p>
-					</div>
-					<div class="title">
-						<h2> Email </h2>
-						
-					</div>
-					<div>
-						<p>{{mentor?.email}}</p>
-					</div>					
-					<div class="title">
-						<h2> City </h2>
-						
-					</div>
-					<div>
-						<p>{{mentor?.city_name}}</p>
-					</div>
-					<div class="title">
-						<h2> Subjects </h2>
-						
-					</div>
-					<div *ngFor ="let subject of mentor?.subjects" >
-						<p>{{subject}}</p>
-					</div>										
+      </div>
 
-					
-				</div>
 
-			
-			</div>
-			<div class="col-sm-9">
-			
-					<button class="btn hire-btn" [ng-modal]="mentor" (ng-modalSubmit)="requestMentor($event)"  > Hire Mentor</button>
-				</div>
-			
-		</div>
-	</div>
+
+
+
+
+
+      <div class="col-sm-9 ">
+        <div class="row">
+          <div class="col-sm-6">
+              <div *ngIf='showNumber' class="alert alert-info">{{message}}</div>
+              <app-star [rating]='mentor?.rate' [itemId]="mentor?.id" [inputWidth]="160" [inputHeight]="40"
+              [inputFontSize]="40" class="star"></app-star>
+          </div>
+          <div class="col-sm-6">
+              <button class="btn btn-danger" [ng-modal]="mentor" [isFlag]="true" (ng-modalSubmit)="requestMentor($event)">&#10084; Rate </button>
+              <button class="btn hire-btn" [ng-modal]="mentor" [isFlag]="false"  (ng-modalSubmit)="requestMentor($event)"> Hire Mentor</button>
+
+          </div>
+        </div>
+          
+
+
+
+        
+
+        
+
+
+        <div class="detail-info">
+
+          <div class="title">
+            <h2> About </h2>
+
+          </div>
+          <div>
+            <p>{{mentor?.about}}</p>
+          </div>
+          <div class="title">
+            <h2> Email </h2>
+
+          </div>
+          <div>
+            <p>{{mentor?.email}}</p>
+          </div>
+          <div class="title">
+            <h2> City </h2>
+
+          </div>
+          <div>
+            <p>{{mentor?.city_name}}</p>
+          </div>
+          <div class="title">
+            <h2> Subjects </h2>
+
+          </div>
+          <div *ngFor="let subject of mentor?.subjects">
+            <p>{{subject}}</p>
+          </div>
+
+
+        </div>
+
+
+      </div>
+      
+
+      
+
+    </div>
+  </div>
+  <div>
+    <app-comments [mentorID]='mentorID'></app-comments>
+
+  </div>
 </div>

@@ -18,25 +18,16 @@ import { MapsAPILoader } from "@agm/core";
 import { HttpClient } from "@angular/common/http";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
-import {LoadingService} from '../../services/loading.service'
+import { LoadingService } from "../../services/loading.service";
+import { DataService } from "../../services/data.service";
 
 import { Observable } from "rxjs/Observable";
 import { map } from "rxjs/operators";
+import "rxjs/add/observable/interval";
+import "rxjs/add/operator/takeWhile";
 import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
-const subjects = 
-[ 'English' ,
- "Art"  ,
- "Chemisty" ,
- "Physics" ,
- "Math" ,
- "ICT"  ,
- "Psychology",
- "Philosophy",
-"Biology",
- "Science"  ,
- "Economics" ,
-"Computer Science" ,"Sociology"  ];
+import * as sitewide from "../../constants";
 
 // import {CreateNewAutocompleteGroup, SelectedAutocompleteItem, NgAutocompleteComponent} from "ng-auto-complete";
 
@@ -45,7 +36,7 @@ const subjects =
   templateUrl: "./editprofile.component.html",
   styleUrls: ["./editprofile.component.css"]
 })
-export class EditprofileComponent implements OnInit, AfterContentChecked {
+export class EditprofileComponent implements OnInit {
   id: string;
   user: any;
   isImage: boolean;
@@ -60,7 +51,7 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
   message: any;
   isLoading: boolean = false;
   imageurl: SafeUrl;
-
+  subjectArray: any[] = [];
 
   constructor(
     private mentorService: MentorService,
@@ -74,10 +65,17 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private http: HttpClient,
-    private loadingService:LoadingService
+    private loadingService: LoadingService,
+    private data: DataService
   ) {
     this.createForm();
-    loadingService.onLoadingChanged.subscribe(isLoading=>this.isLoading = isLoading);
+    loadingService.onLoadingChanged.subscribe(
+      isLoading => (this.isLoading = isLoading)
+    );
+
+    data.getAllSubjects().subscribe(data => {
+      this.subjectArray = data["subjects"].slice(0, data["subjects"].length);
+    });
   }
   createForm() {
     this.editForm = this.fb.group({
@@ -85,26 +83,13 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
       city: "",
       subject: ""
     });
-    
   }
 
   @ViewChild("city") searchElementRef: ElementRef;
- 
 
-  // public group = [
-  //       CreateNewAutocompleteGroup(
-  //           'Enter Subject e.g English',
-  //           'completer',
-  //           [
-  //               {title: 'English', id: "en"},
-  //               {title: 'Physics', id: "phy"},
-  //               {title: 'Biology', id: "bio"},
-
-  //           ],
-  //           {titleKey: 'title', childrenKey: null}
-  //       ),
-  //   ];
   public model: any;
+  formatter = (result: any) => result.name;
+
   searchSub = (text$: Observable<string>) =>
     text$
       .debounceTime(200)
@@ -112,40 +97,31 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
         term =>
           term === ""
             ? []
-            : subjects
+            : this.subjectArray
                 .filter(
-                  v => v.toLowerCase().indexOf(term.toLowerCase()) > -1
+                  v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1
                 )
                 .slice(0, 10)
       );
 
-  // formatter = (x: { name: string }) => x.name;
-
   ngOnInit() {
-    // if(this.authService.isMentor()){
-    //   th
-    // }
-    //https://api.cloudinary.com/v1_1/${this.cloudinary.config().cloud_name}/upload
-    this.getMentor().subscribe(_ => {
+    this.getUser().subscribe(_ => {
       // console.log(this.user.city_name)
       this.editForm.setValue({
         phoneNumber: this.user.phone_number || "",
-        city: this.user.city_name|| "",
+        city: this.user.city_name || "",
         subject: ""
- 
-
       });
     });
-    
-    if(this.authService.isMentor() && this.authService.isVerified()){
-      
+
+    if (this.authService.isMentor() && this.authService.isVerified()) {
       if (isPlatformBrowser(this.platformID)) {
         this.mapsApiLoader.load().then(() => {
           let cp: google.maps.places.ComponentRestrictions;
           cp = {
             country: ["so"]
           };
-  
+
           let autocomplete = new google.maps.places.Autocomplete(
             this.searchElementRef.nativeElement,
             {
@@ -154,11 +130,11 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
               componentRestrictions: cp
             }
           );
-  
+
           autocomplete.addListener("place_changed", () => {
             this.ngZone.run(() => {
               let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-  
+
               if (place.geometry === null || place.geometry === undefined) {
                 return;
               }
@@ -169,60 +145,53 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
           });
         });
       }
-
     }
-
-    
   }
 
   @ViewChild("fileInput") fileInput;
 
   upload() {
-     
-
     let fileBrowser = this.fileInput.nativeElement;
-    if (fileBrowser.files && fileBrowser.files[0] ) {
-      if(!fileBrowser.files[0].type.match('image.*')){
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      if (!fileBrowser.files[0].type.match("image.*")) {
         return;
-
       }
       const formData = new FormData();
       formData.append("image", fileBrowser.files[0]);
-      this.authService.uploadImage(formData, this.user._id).subscribe(async res => {
-           
+      this.authService.uploadImage(formData).subscribe(async res => {
         if (res["success"]) {
           var url = res["url"];
           // console.log(res)
           this.updated = true;
-          this.success = false;
-          this.message = "Image uploaded"
+          this.success = true;
+          this.message = "Image uploaded";
 
-          this.imageurl =await this.sanitizer.bypassSecurityTrustUrl(url);
+          this.imageurl = await this.sanitizer.bypassSecurityTrustUrl(url);
 
           this.cdRef.detectChanges();
-        } else if(!res["success"]){
+        } else if (!res["success"]) {
           this.updated = true;
           this.success = false;
-          this.message = "there was a problem uploading the image. Try again in a few minutes"
-          if(!this.user.img) this.placeHolderImage(this.user);
-
-
+          this.message =
+            "there was a problem uploading the image. Try again in a few minutes";
+          if (!this.user.img) this.placeHolderImage(this.user);
         }
       });
     }
   }
 
-  getMentor() {
-    // const id = this.route.snapshot.paramMap.get('id');
-     
+  getUser() {
     return this.authService.getProfile().map(async data => {
       //console.log(data);
 
       if (data["success"]) {
         this.user = data["user"];
+        if(this.authService.isMentor() && this.user.subjects.includes(null)){
+          this.user.subjects = [];
+        }
+
         var img = data["user"].imageurl;
-        // this.subjects = data["user"].subjects.slice();
-          
+
 
         if (img == null || img == undefined) {
           this.isImage = false;
@@ -237,81 +206,68 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
       }
     });
   }
-  ngAfterContentChecked() {
-    setTimeout(() => {
-      this.updated = false;
-    }, 3*10000);
-  }
-  placeHolderImage(user) {
 
+  placeHolderImage(user) {
     //console.log(mentor)
     var temp = user.name.toString();
     var s = temp.split(" ");
     var index = 0;
-    user.initial=""
+    user.initial = "";
 
-    
-      user.initial = s[index].substr(0,1);
-      user.initial = user.initial.toUpperCase();
+    user.initial = s[index].substr(0, 1);
+    user.initial = user.initial.toUpperCase();
+  }
 
-  }
-  requestMentor(user: any) {
-    //console.log(user)
-  }
   @ViewChild("avatar") avatar;
   @ViewChild("about") aboutRef: ElementRef;
   @ViewChild("phoneNumber") phoneNumberRef: ElementRef;
-
- 
 
   updateUser() {
     // event.preventDefault();
 
     let updatedUser;
 
-    if(this.authService.isMentor()){
-      // var lng = this.user.location.coordinates[0];
-      // var lat = this.user.location.coordinates[1];
-      // var location = {
-      //   type: "Point",
-      //   coordinates: [this.longtitude||lng, this.latitude||lat]
-      // };
-      var location ={
-        longtitude:this.longtitude ||this.user.lng,
-        latitude:this.latitude ||this.user.lat
-      }
-      // console.log(location)
-      updatedUser =  {
-        name:this.user.name,
-        imageurl:this.user.imageurl ||this.imageurl,
+    if (this.authService.isMentor()) {
+      var location = {
+        longtitude: this.longtitude || this.user.lng,
+        latitude: this.latitude || this.user.lat
+      };
+
+      updatedUser = {
+        // name:this.user.name,
+        imageurl: this.user.imageurl || this.imageurl,
         about: this.aboutRef.nativeElement.value || this.user.about,
         city_name: this.cityName || this.user.city_name,
-        location: location ,
-        lng:this.longtitude ||this.user.lng,
-        lat:this.latitude ||this.user.lat,
+        location: location,
+        lng: this.longtitude || this.user.lng,
+        lat: this.latitude || this.user.lat,
 
-        phoneNumber:'+252'+ this.phoneNumberRef.nativeElement.value,
-        subjects:  this.user.subjects
+        phoneNumber: "+252" + this.phoneNumberRef.nativeElement.value,
+        subjects: this.user.subjects
       };
-    } else{
-      updatedUser={
-        name:this.user.name,
-        phoneNumber:this.phoneNumberRef.nativeElement.value
-      }
-
+    } else {
+      updatedUser = {
+        // name:this.user.name,
+        phoneNumber: this.phoneNumberRef.nativeElement.value
+      };
     }
     // console.log(updatedUser);
     this.authService.updateUser(updatedUser).subscribe(data => {
+      this.updated = true;
       //console.log(data)
       if (data["success"]) {
-        this.updated = true;
+        this.flashMessage();
         this.success = true;
         this.message = data["msg"];
-          
       } else {
-        this.updated = true;
+        this.flashMessage();
         this.success = false;
-        this.message = data["msg"];
+        this.message = "";
+        if (data["msg"] instanceof Array) {
+          data["msg"].forEach(e => (this.message += e.msg + " \n"));
+        } else {
+          this.message += data["msg"];
+        }
         // console.log(data["msg"]);
       }
 
@@ -332,13 +288,6 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
     return array;
   }
 
-  onItemSelected(selected: any) {
-    // this.addSubject(selected).then(()=>{
-    //   this.user.subjects.push(selected);
-    // });
-    // this.cdRef.detectChanges();
-  }
-
   checkSubject(subject: any) {
     var temp = {
       name: subject.name,
@@ -348,7 +297,7 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
     //console.log(temp)
     //console.log(this.subjects)
     for (var i = 0; i < this.user.subjects.length; i++) {
-      if (this.user.subjects[i] != subject) {
+      if (this.user.subjects[i] != subject.name) {
         isSub = false;
       } else {
         isSub = true;
@@ -361,30 +310,31 @@ export class EditprofileComponent implements OnInit, AfterContentChecked {
   }
 
   Selected(item: any) {
-    if(!this.user.subjects){
+    if (!this.user.subjects) {
       var temp = item.item;
       var sub = {
         name: temp.name
       };
       // console.log(sub)
-      this.user.subjects=[];
+      this.user.subjects = [];
 
-      this.user.subjects.push(temp);
-
-    }
-
-    else if (this.user.subjects &&!this.checkSubject(item.item)) {
-     
+      this.user.subjects.push(temp.name);
+    } else if (this.user.subjects && !this.checkSubject(item.item)) {
       var temp = item.item;
       var sub = {
         name: temp.name
       };
       // console.log(sub)
 
-      this.user.subjects.push(temp);
+      this.user.subjects.push(temp.name);
       // console.log(this.user.subjects)
 
       // else{return}
     }
+  }
+  flashMessage() {
+    Observable.interval(10000).subscribe(i => {
+      this.updated = false;
+    });
   }
 }

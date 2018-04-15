@@ -15,7 +15,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
-import { AboutComponent } from './components/about/about.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -41,9 +40,7 @@ import {LoadingService} from './services/loading.service';
 import { ErrorComponent } from './components/error/error.component';
 
 
-  import { CloudinaryModule } from '@cloudinary/angular-5.x';
-  import * as  Cloudinary from 'cloudinary-core';
-import { RegisterStudentComponent } from './register-student/register-student.component';
+import { RegisterStudentComponent } from './components/register-student/register-student.component';
 import { ServiceComponent } from './components/service/service.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
@@ -52,12 +49,23 @@ import { VerifiyTokenComponent } from './components/verifiy-token/verifiy-token.
 import { PasswordGuard } from './guard/password-guard.guard';
 import { LoadingInterceptor } from './services/loading-interceptor.interceptor';
 
+import { RegisterFormComponent } from './components/register-form/register-form.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { StudentLoginComponent } from './components/student-login/student-login.component';
+import { StarFormComponent } from './components/star-form/star-form.component';
+import { StarComponent } from './components/star/star.component';
+
+import { CommentsComponent } from './components/comments/comments.component';
+import { CommentService } from './services/comment.service';
+import { RateComponent } from './components/rate/rate.component';
+import { ResendTokenComponent } from './components/resend-token/resend-token.component';
+import { MentorRegisterFormComponent } from './components/mentor-register-form/mentor-register-form.component';
+
 enableProdMode();
 
 
 var id:any;
 const appRoutes:Routes=[{path:'',component:HomeComponent},
-{path:'about',component:AboutComponent},
 {path:'register',component:RegisterComponent},
 {path:'login',component:LoginComponent},
 {path:'profile',component:ProfileComponent, canActivate:[AuthGuard]},
@@ -70,6 +78,7 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
 {path:'forgot-password',component:ForgotPasswordComponent},
 {path:'change-password',component:ChangePasswordComponent,canActivate:[AuthGuard]},
 {path:'verify-token',component:VerifiyTokenComponent, canActivate:[PasswordGuard]},
+
 {path:'**', redirectTo:''}
 
 ]
@@ -80,7 +89,7 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
     AppComponent,
 
     HomeComponent,
-    AboutComponent,
+
     LoginComponent,
     NavbarComponent,
     RegisterComponent,
@@ -96,7 +105,16 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
     ServiceComponent,
     ForgotPasswordComponent,
     ChangePasswordComponent,
-    VerifiyTokenComponent  
+    VerifiyTokenComponent,
+    RegisterFormComponent,
+    LoginFormComponent,
+    StudentLoginComponent,
+    StarFormComponent,
+    StarComponent,
+    CommentsComponent,
+    RateComponent,
+    ResendTokenComponent,
+    MentorRegisterFormComponent  
    
   ],
   imports: [
@@ -107,8 +125,6 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
     NgbModule.forRoot(),
-    CloudinaryModule.forRoot(Cloudinary, { cloud_name: 'mentome', api_secret:'uR7CNXyjXNk_esh10g-nwhQEocc', api_key:'456493615534494',
-      upload_preset:'zapewgp1'}),
     AgmCoreModule.forRoot({
       apiKey:"AIzaSyCs9Za3rl7jZdfryoLs46zzCyvR0SORz5c",
       libraries:["places"]
@@ -124,7 +140,8 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
       provide:HTTP_INTERCEPTORS,
     useFactory:(service:LoadingService)=>new LoadingInterceptor(service),
     multi:true,
-    deps:[LoadingService]}],
+    deps:[LoadingService],
+    },CommentService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

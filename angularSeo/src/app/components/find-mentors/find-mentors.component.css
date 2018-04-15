@@ -14,6 +14,7 @@
 
 .centered-cropped{
     object-fit: cover;
+    padding:3px;
 
 }
 .pic {
@@ -27,6 +28,7 @@
   font-size: 48px;
   color: #ffffff;
   box-shadow: 0px 0px 6px rgba(20, 20, 20, 0.6);
+  padding: 3px;
 }
     
 
@@ -63,11 +65,18 @@
 }
 
 .title h1{
+    margin-top:15px;
     font-size: 1.8em;
 }
 .title h3{
     font-size: 1.2em;
     font-style: italic;
+
+}
+.title h5 {
+    font-style:italic;
+    padding:3px;
+    font-size:1em;
 
 }
 .btn-primary{
@@ -136,4 +145,10 @@ text-align: justify-all;
 
 .form-control{
     border-radius: 0;
+}
+.small-star{
+    position: absolute;
+    top:-20px;
+    
+    left:120px;
 }

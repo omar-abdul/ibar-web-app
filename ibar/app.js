@@ -1,19 +1,25 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var helmet = require('helmet')
-var config = require('./config/database');
-var pg = require('pg');
-var passport = require('passport');
+var express = require("express");
+var path = require("path");
+var favicon = require("serve-favicon");
+var logger = require("morgan");
+var cookieParser = require("cookie-parser");
+var bodyParser = require("body-parser");
+var cors = require("cors");
+var helmet = require("helmet");
+var config = require("./config/database");
+const {DatabaseError,SendMailError,UploadError} = require("./helper/custom-errors");
 
+var passport = require("passport");
+const winston = require("winston");
 
-var index = require('./routes/index');
+var index = require("./routes/index");
+const {Pool} = require("pg"); 
+require('dotenv').config();
+
 
 var app = express();
+
+winston.level = process.env.LOG_LEVEL
 
 // // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -21,77 +27,118 @@ var app = express();
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(logger("short"));
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./config/passport')(passport);
+require("./config/passport")(passport);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
+ const pool = new Pool();
 
-// var pool = new pg.Pool(config);
-
-
-var server=app.listen(process.env.PORT||4000, function(){
-	console.log("Server started at" +process.env.PORT)
-
+var server = app.listen(process.env.PORT || 4000, function() {
+  console.log("Server started at : " + process.env.PORT);
 });
 
-var graceFullShutdown = function(){
-	console.log("Signal recieved")
-	server.close(function(){
-		console.log("closed out all connections")
-		process.exit();
-	});
+var graceFullShutdown = function() {
+  console.log("Signal recieved");
+  server.close(function() {
+    console.log("closed out all connections");
+    process.exit();
+  });
 
-	setTimeout(function(){
-		console.error("could not close connections in time")
-		process.exit();
-	},10*1000)
-	
-}
+  setTimeout(function() {
+    console.error("could not close connections in time");
+    process.exit();
+  }, 10 * 1000);
+};
 
-process.on('SIGTERM',graceFullShutdown);
+process.on("SIGTERM", graceFullShutdown);
 
-process.on('SIGINT',graceFullShutdown)
+process.on("SIGINT", graceFullShutdown);
+process.on("unhandledRejection", (reason, p) => {
+  console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
+  // application specific logging, throwing an error, or other logic here
+  
+  throw new Error("Unhandled promise at :"+p+"\n reason: "+reason);
+      
+});
+
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err)
+  process.exit(-1)
+})
 
 
-app.use('/api',index);
+// app.use("/api", index);
+app.use("/api",require('./components/token/router'));
+app.use("/api",require('./components/mentor/router'));
+app.use("/api",require('./components/comment/router'));
+app.use("/api",require('./components/user/router'));
+app.use("/api",require('./components/job/router'));
 
-app.get('/', (req, res)=> {
+app.get("/", (req, res) => {
   res.send("Invalid end Point");
 });
 
 
-
-app.get('*',(req,res)=>{
-    res.sendFile(path.join(__dirname,'public/index.html'));
-})
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
 
 
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
-
-// // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   // res.render('error');
-// });
-
+app.use(function handleDbError(error,req,res,next){
+  if(error instanceof DatabaseError){
+    winston.log('debug',error.message);
+    res.json({
+      success:false,
+      msg:"Oops looks like something went wrong! Our bad :("
+    })
+  }
+  else{
+    next(error)
+  }
+  
+});
+  app.use(function handleMailError(error,req,res,next){
+    if(error instanceof SendMailError){
+      winston.log('debug',error.message);
+      res.json({
+        success:false,
+        msg:[{msg:"There was an error sending the confirmation email, try resending"}]
+      })
+    }
+    else{
+      next(error)
+    }
+    
+  });
+    app.use(function handleUploadError(error,req,res,next){
+      if(error instanceof UploadError){
+        winston.log('debug',error.message);
+        res.json({
+          success:false,
+          msg:"There was an error uploading the image, try again in a little bit"
+        })
+      }
+      else{
+        next(error);
+      }
+      
+});
+app.use(function(error,req,res,next){
+  
+    winston.log('debug',error.message);
+    res.json({
+      success:false,
+      msg:"Oops looks like something went wrong, try again"
+    })
+  
+});
 
 
 module.exports = app;

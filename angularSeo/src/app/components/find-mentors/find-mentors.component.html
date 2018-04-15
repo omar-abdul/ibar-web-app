@@ -1,77 +1,94 @@
 <div class="container ">
 
-	<ng-template #rt let-r="result" let-t="term">
-  {{ r.name}}
-</ng-template>
+  <ng-template #rt let-r="result" let-t="term">
+    {{ r.name}}
+  </ng-template>
 
 
-	<div class="fil-form">
-		<form [formGroup]="searchForm" novalidate class="form-inline" (submit)="findMentors()">
-			<div class="form-group">
-      <input  class="form-control" #search size="30" placeholder="Enter city name" autocorrect="off" autocapitalize="off" spellcheck="off"  formControlName="city" />
-			</div>
+  <div class="fil-form">
+    <form [formGroup]="searchForm" novalidate class="form-inline" (submit)="findMentors()">
       <div class="form-group">
-      
-<!-- 		<ng-autocomplete   (selected)="Selected($event)" [classes]="['']" [group]="group"></ng-autocomplete> -->
-	<input id="typeahead-basic" type="text" class="form-control"  [(ngModel)]="model"
-	[ngbTypeahead]="searchSub" placeholder="Enter subject name"  formControlName="subject"  />
+        <input class="form-control" #search size="30" placeholder="Enter city name" autocorrect="off" autocapitalize="off" spellcheck="off"
+          formControlName="city" />
+      </div>
+      <div class="form-group">
 
-		 </div>
-		 
-		 
+        <!-- 		<ng-autocomplete   (selected)="Selected($event)" [classes]="['']" [group]="group"></ng-autocomplete> -->
+        <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="searchSub" [resultTemplate]="rt"
+        [inputFormatter]="formatter" placeholder="Enter subject name"
+          formControlName="subject" />
 
-				<button type="submit" class="btn btn-primary">Search</button>
-
-
-			
-		</form>
-	</div>
-<div *ngIf ="isLoading" class="text-center" style="z-index: 9999"><img class="middle-rolling" src ="/assets/images/Rolling.gif"></div>
-
-<div *ngFor="let mentor of mentors; let idx = index "  [attr.data-index]="idx">
-	<div class="card-mentor">
-		<div class="card-info">
-			<div class="row">
-				<div class="col-sm-8">
-						<div  *ngIf="!mentor?.imageurl" class="pic" >
-							
-
-							{{mentor?.initial}}
-
-						</div>
-						
-					
-					<ng-container *ngIf="mentor?.imageurl">
-					<img class="centered-cropped" [src]='mentor?.imageurl' width="120" height="120" style="border-radius: 50%">						
-					</ng-container>
-		
-	
-		
-  
-     
- 				<div class="title">
-    				<h1>{{mentor?.name}}</h1>
-    			
-    				<h3>{{mentor?.about}}</h3>
-
-    			</div>
-    		</div>
-    			
-    				<div class="col-sm-4">
- 					 	<button class="hirebtn" [ng-modal]="mentor" (ng-modalSubmit)="requestMentor($event)" >Hire</button>
-  						<a class="hirebtn" routerLink="/mentor/{{mentor?.id}}" >View more</a>
-  					</div>
-  				</div>
-    
-    	</div>
-	
-  
-
-    
-</div>
+      </div>
 
 
-	</div>
+
+      <button type="submit" class="btn btn-primary">Search</button>
+
+
+
+    </form>
+  </div>
+  <div *ngIf="isLoading" class="text-center" style="z-index: 9999">
+    <img class="middle-rolling" src="/assets/images/Rolling.gif">
+  </div>
+
+  <div *ngFor="let mentor of mentors; let idx = index " [attr.data-index]="idx">
+    <div class="card-mentor">
+      <div class="card-info">
+        <div class="row">
+          <div class="col-sm-8">
+            <tr>
+              <td>
+                  <app-star [rating]='mentor?.rate' [itemId]="mentor?.id" [inputWidth]="80" [inputHeight]="20"
+                  [inputFontSize]="20" class="small-star"></app-star>
+                </td>
+                
+              </tr>
+            <div *ngIf="!mentor?.imageurl" class="pic">
+
+
+              {{mentor?.initial}}
+
+            </div>
+            
+
+
+
+
+            <ng-container *ngIf="mentor?.imageurl">
+              <img class="centered-cropped" [src]='mentor?.imageurl' width="120" height="120" style="border-radius: 50%">
+            </ng-container>
+            
+
+
+
+
+
+
+            <div class="title">
+              <h1>{{mentor?.name}}</h1>
+              <h5>{{mentor?.subjects}}</h5>
+
+              <h3>{{mentor?.about}}</h3>
+
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <button class="hirebtn" [ng-modal]="mentor" (ng-modalSubmit)="requestMentor($event)">Hire</button>
+            <a class="hirebtn" routerLink="/mentor/{{mentor?.id}}">View more</a>
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+    </div>
+
+
+  </div>
 
 
 

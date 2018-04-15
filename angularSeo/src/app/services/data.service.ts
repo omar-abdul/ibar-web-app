@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-
+import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
 
 import {map} from 'rxjs/operators'
 import {of} from 'rxjs/observable/of';
+import * as siteWide from "../constants";
 
 @Injectable()
 export class DataService {
@@ -14,6 +15,10 @@ export class DataService {
 	private countryNameSource = new BehaviorSubject<any>("");
 	private subSource = new BehaviorSubject<any>("");
 	private tokenSource = new BehaviorSubject<boolean>(false);
+	private emailSrc = new BehaviorSubject<string>("");
+
+
+	private subjectArray = new BehaviorSubject<string[]>([]);
 
 
 
@@ -22,8 +27,25 @@ export class DataService {
 	currentCountry= this.countryNameSource.asObservable();
 	currentSub = this.subSource.asObservable();
 	currentToken = this.tokenSource.asObservable();
+	currentSubArray = this.subjectArray.asObservable();
+	currentEmail = this.emailSrc.asObservable();
 	arr:any[];
-  constructor() { }
+  constructor(private http:HttpClient) { }
+  private url = siteWide.constants.SERVER_URL;
+
+  inputSubjectValues(subjects:string[]){
+	  this.subjectArray.next(subjects);
+  }
+  changeEmail(email:string){
+	  this.emailSrc.next(email);
+  }
+  getAllSubjects(){
+	  return this.http.get(this.url+"/api/subjects")
+	  .map(res=>{
+		  return res;
+	  })
+
+  }
  
 
   changeToken(token:boolean){

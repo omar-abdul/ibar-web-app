@@ -1,0 +1,57 @@
+
+<h2>Reviews</h2>
+
+
+    <hr/>
+    <div *ngFor="let comment of comments">
+    <div class="comment-section" >
+    
+        
+        <div class="comment-container">
+          <div class="row">
+            <div class="col-sm-2 text-center float-left">
+                <div class="pic" style="width:50px; height:50px; font-size:20px">
+                    {{comment?.user_initial}}
+                   </div>
+                   <div class="comment-info">
+                     <h4>{{comment?.created_at}}</h4>
+                     
+                     <h4>{{comment?.name}}</h4>
+                   </div>
+            </div>
+
+                
+               <div class="col-sm-6">
+                  <div class="comment-content text-center">
+                 
+                      
+                         <app-star [rating]='comment?.percentRate' [itemId]="mentor?.id" [inputWidth]="80" [inputHeight]="20"
+                         [inputFontSize]="20"></app-star>
+                      
+             
+                     <div>{{comment?.comment_text}}</div>
+                   </div>
+
+               </div>
+
+          </div>
+          
+          <hr style="width:70%; margin-top:10px; text-align:center"/>
+    
+        </div>
+        
+      </div>
+      </div>
+      
+
+
+<ng-container *ngIf="!isComment">
+    
+      <div class="text-center ">
+        No reviews found 
+
+    </div>
+  
+</ng-container>
+
+

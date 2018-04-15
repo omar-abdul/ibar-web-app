@@ -1,6 +1,6 @@
 #cover
 {
-	background-image: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url("http://res.cloudinary.com/mentome/image/upload/v1514543007/library.jpg");
+	background-image: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url("https://res.cloudinary.com/mentome/image/upload/v1522839530/back-to-school-2629361_1920.jpg");
    background-size: cover;
    background-position: center;
    height:100vh;
@@ -63,6 +63,13 @@ visibility: hidden;
 
 
 }
+.card-body{
+  padding:5px;
+}
+.bg-dark{
+  opacity:1;
+}
+
 
 
 #about{
@@ -103,9 +110,10 @@ visibility: hidden;
       -webkit-transform: translateX(0%);
     }
   }
- .bg-dark{
-    opacity: 0.8;
+  .small-font{
+    font-size: 0.6em;
   }
+
   .bg-grey{
     background: #f6f6f6;
     

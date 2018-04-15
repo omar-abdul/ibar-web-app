@@ -1,6 +1,6 @@
 
 .cover{
-   background-image: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url('http://res.cloudinary.com/mentome/image/upload/v1514543055/knowledge.jpg');
+   background-image: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url('https://res.cloudinary.com/mentome/image/upload/v1514543055/knowledge.jpg');
    background-size: cover;
    background-position: center;
    min-height:100%;

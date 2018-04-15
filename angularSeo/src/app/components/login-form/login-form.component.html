@@ -1,0 +1,47 @@
+<div class="card card-body bg-white mt-5 mb-5">
+
+
+  <form (submit)="onLoginSubmit()">
+
+    <div class="alert alert-danger" *ngIf=!validated||!authenticated>
+      <p>{{message}}</p>
+    </div>
+    <h2 class="text-center">Sign In </h2>
+    <br/>
+
+
+    <div class="input-group">
+
+      <span class="input-group-addon">
+        <i class="fa fa-envelope" aria-hidden="true"></i>
+      </span>
+      <input type="text" class="form-control" [(ngModel)]="email" required minlength="4" name="em" placeholder="you@yourmail.com">
+    </div>
+
+    <br/>
+
+    <div class="input-group">
+
+
+      <span class="input-group-addon">
+        <i class="fa fa-key" aria-hidden="true"></i>
+      </span>
+      <input type="password" class="form-control" [(ngModel)]="password" required minlength="8" name="pass" placeholder="Password"
+        required minlength="8">
+
+
+    </div>
+    <br/>
+
+
+    <div class="align-center">
+      <button type="submit" class="btn submit-btn">Sign In</button>
+
+    </div>
+    <br/>
+    <a routerLink='/forgot-password'>Forgot password</a>
+
+
+
+  </form>
+</div>

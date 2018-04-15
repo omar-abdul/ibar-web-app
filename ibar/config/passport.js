@@ -1,9 +1,8 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-// const passport = require('passport');
 
 const config =require('../config/database');
-const User = require('../controller/util')
+const User = require("../components/user/userModel");
 
 
 
@@ -16,7 +15,8 @@ module.exports=function(passport){
 	passport.use(new JwtStrategy(opts, function(jwt_payload,done){
 		// console.log(jwt_payload);
 		
-				User.getUserById(jwt_payload.data.id).then((results)=>{
+				User.getUserById(jwt_payload.data.id)
+				.then((results)=>{
 					// if(err) return done(err,false);
 
 					if(results){
@@ -25,6 +25,6 @@ module.exports=function(passport){
 						return done(null, false);
 					}
 
-				});
+				}).catch(error=>console.error(error));
 	}));
 }

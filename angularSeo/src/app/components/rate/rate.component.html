@@ -1,0 +1,19 @@
+<div>
+  <div *ngIf="submitted && message!==''" class="alert alert-success">
+    {{message}}
+  </div>
+  <div *ngIf="!submitted" class="alert alert-danger">
+    {{message}}
+  </div>
+<app-star-form (ratingClick)="ratingComponentClick($event)">
+
+</app-star-form>
+<form>
+    <div class="form-group">
+        
+        <textarea class="form-control" [(ngModel)]='commentText' name="commentT" id="Textarea" rows="3" placeholder="Leave a comment" cols="50"></textarea>
+      </div>
+<button (click)='submitComment()' class="btn btn-primary">Send</button>
+
+</form>
+</div>

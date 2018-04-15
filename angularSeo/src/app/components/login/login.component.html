@@ -1,49 +1,13 @@
+<div class="container">
+  <div class="row ">
+    <div class="col-md-6 mx-auto">
+        <div *ngIf="isLoading" class="text-center" style="z-index: 9999">
+            <img class="rolling" src="/assets/images/Rolling.gif">
+          </div>
+      <app-login-form></app-login-form>
 
-  <div class="bg-grey ">
-    <div class="container">
-
-    <div class="row ">
-           
-        <div>
-                
-            
-            <form class="form_bg" (submit)="onLoginSubmit()">
-
-                 <div class="alert alert-danger" *ngIf=!validated||!authenticated>
-                <p>{{message}}</p>
-                </div>
-                 <h2 class="text-center">Sign In</h2>
-                <br/>
-               
-                
-                <div class="input-group">
-                
-                    <span class="input-group-addon"><i class="fa fa-envelope" aria-hidden="true"></i></span><input type="text" class="form-control" [(ngModel)]="email" required minlength="4" name="em" placeholder="you@yourmail.com" >
-                </div>
-
-                <br/>
-                 
-                <div class="input-group">
-                    
-
-                    <span class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></span><input type="password" class="form-control" [(ngModel)]="password"  required minlength="8" name="pass"  placeholder="Password" required minlength="8" >
-                
-                
-            </div>
-    <br/>
-
-    <div *ngIf ="isLoading" class="text-center" style="z-index: 9999"><img class="rolling" src ="/assets/images/Rolling.gif"></div>
-                <div class="align-center">
-                    <button type="submit" class="btn submit-btn">Sign In</button>
-                    
-                    </div>
-                    <br/>
-                    <a routerLink='/forgot-password'>Forgot password</a>
-
-
-                
-            </form>
-        </div>
     </div>
-</div>
+
+
+  </div>
 </div>

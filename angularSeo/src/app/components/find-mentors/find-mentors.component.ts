@@ -23,23 +23,13 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { FormBuilder, FormGroup,FormArray } from "@angular/forms";
 import {} from "googlemaps";
 import { MapsAPILoader } from "@agm/core";
-import {LoadingService} from '../../services/loading.service'
-// import "rxjs/add/operator/map";
-// import {CreateNewAutocompleteGroup, SelectedAutocompleteItem, NgAutocompleteComponent} from "ng-auto-complete";
+import {LoadingService} from '../../services/loading.service';
+import {StarFormComponent} from '../star-form/star-form.component' ;
+import {CommentService} from "../../services/comment.service";
+import * as sitewide from "../../constants";
 
-const subjects = 
-[ 'English' ,
- "Art"  ,
- "Chemisty" ,
- "Physics" ,
- "Math" ,
- "ICT"  ,
- "Psychology",
- "Philosophy",
-"Biology",
- "Science"  ,
- "Economics" ,
-"Computer Science" ,"Sociology"  ];
+
+
 @Component({
   selector: "app-find-mentors",
   templateUrl: "./find-mentors.component.html",
@@ -62,12 +52,14 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
   isLoading = false;
   private showFooter = false;
    public model:any;
+   public items:any[];
+   public percentRate = 0;
+   subjectArray:any[]=[];
+  
 
   
 
   @ViewChild("search") public searchRef: ElementRef;
-  // @ViewChild("subject") public subjectRef: ElementRef;
-  // @ViewChild(NgAutocompleteComponent) public completer: NgAutocompleteComponent;
 
   constructor(
     private data: DataService,
@@ -80,10 +72,17 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     private mapsApiLoader: MapsAPILoader,
     private fb: FormBuilder,
     private mentorService: MentorService,
-    private ls:LoadingService
+    private ls:LoadingService,
+    private commentService:CommentService
   ) {
     this.createForm();
     ls.onLoadingChanged.subscribe(isLoading=>this.isLoading=isLoading);
+
+        data.getAllSubjects().subscribe(data=>{
+          this.subjectArray = data['subjects'].slice(0,data['subjects'].length);
+    
+        })
+
   }
 
   createForm() {
@@ -93,54 +92,16 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     });
   }
 
-
-   // public group = [
-   //      CreateNewAutocompleteGroup(
-   //          'Enter Subject e.g English',
-   //          'completer',
-   //          [
-   //              {title: 'English', id: "en"},
-   //              {title: 'Physics', id: "phy"},
-   //              {title: 'Biology', id: "bio"},
-
-
-
-   //          ],
-   //          {titleKey: 'title', childrenKey: null}
-   //      ),
-   //  ];
-  
+formatter=(result:any)=>result.name;
 
    searchSub= (text$:Observable<string>)=>
       text$
       .debounceTime(200)
       .map(term => term === '' ? []
-        : subjects.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10));
+        : this.subjectArray
+        .filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10));
    
 
-
- 
-
-  getMentors() {
-
-    this.mentors = [];
-
-    return this.locationservice
-      .getNearbyMentors(this.longtitude, this.latitude,this.model)
-      .map(data => {
- 
-        if (data) {
-          data["results"].forEach((i, index, array) => {
-            // ////console.log(array.length);
-
-            array.forEach((j, index) => {
-              // ////console.log(j);
-              this.mentors.push(...j);
-            });
-          });
-        }
-      });
-  }
   ngAfterViewChecked() {
 
     if (this.searchRef.nativeElement.value == "") {
@@ -150,6 +111,7 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.items = [];
 
     this.returnUrl = this.route.snapshot.queryParams["returnUrl"] || "/";
     if (this.authService.isMentor()) {
@@ -166,36 +128,7 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     this.data.currentSub.subscribe(sub=>(this.model = sub));
     if (this.longtitude != undefined && this.latitude != undefined) {
       this.getCloseMentors().subscribe(async _ => {
-        for(let i of this.mentors) {
-          // ////console.log(i.img.path)
-          var img=i.img;
-          
-          if (img==null ||img==undefined) {
-  
-            this.isImage = false;
 
-            this.placeHolderImage(i);
-            ////console.log(i.img);
-
-          // var id = i.img.path;
-
-          //   this.authService.getProfilePic(id).subscribe((data) => {
-
-              
-          //     this.createImageFromBlob(data, i);
-          //   });
-
-          //  i.imageurl = this.sanitizer.bypassSecurityTrustUrl(url)  
-                 
-          } else{
-            
-            this.isImage = true;
-            var url =  img;
-           
-           i.imageurl = await this.getImage(url);
-
-          }
-        };
       });
     }
     this.mapsApiLoader.load().then(() => {
@@ -226,6 +159,14 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
       });
     });
   }
+  getExcerpt(sentence:string){
+    
+    if(sentence && sentence.length>22){
+     return  sentence = sentence.substr(0,22)+'...';
+     
+    }
+    else{return sentence}
+  }
   async getImage(url){
 
     let imageurl = await this.sanitizer.bypassSecurityTrustUrl(url) 
@@ -244,6 +185,11 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
       user.initial = user.initial.toUpperCase();
 
   }
+  joinText(arr:string[]){
+    let string = arr.join(",")
+    return this.getExcerpt(string);
+
+  }
 
   getCloseMentors(){
 
@@ -253,85 +199,60 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     .map(data => {
 
       if (data['success']) {
-        data["res"].forEach((i, index, array) => {
-          // ////console.log(array.length);
-          this.mentors.push(i);
-          //console.log(i);
+        data["res"].forEach(async (i, index, array) => {
 
+          this.mentors.push(i);
+          for(let mentor of this.mentors) {
+           
+            
+           
+            mentor.about = this.getExcerpt(mentor.about);
+            mentor.subjects = this.joinText(mentor.subjects);
+   
+             var img= await mentor.imageurl;
+             
+             if (img==null ||img==undefined) {
+     
+               this.isImage = false;
+   
+               this.placeHolderImage(mentor);
+                    
+             } else{
+   
+               this.isImage = true;
+               var url =  img;
+              
+               mentor.imageurl=await this.getImage(url);
+   
+             }
+             mentor.stars =4;
+           };
 
         });
+        
       }
+      else{console.log(data['res'])}
     });
 
   }
 
-  // public onItemSelected(selected: any) {
-  //   // ////console.log("selected: ", selected.code);
-  //   this.code = selected.code;
 
-  // }
   findMentors() {
 
     if (this.latitude !== 0 && this.longtitude !== 0) {
-      // this.latitude=8.475987000000002;
-      // this.longtitude=47.365760300000034;
-      let reader = new FileReader();
+
+
       this.getCloseMentors().subscribe(async _ => {
-
-        for(let i of this.mentors) {
-          // ////console.log(i.img.path)
-          var img= await i.imageurl;
-          
-          if (img==null ||img==undefined) {
-  
-            this.isImage = false;
-
-            this.placeHolderImage(i);
-            ////console.log(i.img);
-
-          // var id = i.img.path;
-
-          //   this.authService.getProfilePic(id).subscribe((data) => {
-
-              
-          //     this.createImageFromBlob(data, i);
-          //   });
-
-          //  i.imageurl = this.sanitizer.bypassSecurityTrustUrl(url)  
-                 
-          } else{
-
-            this.isImage = true;
-            var url =  img;
-           
-            i.imageurl=await this.getImage(url);
-
-          }
-        };
+        
       });
     }
   }
 
-  createImageFromBlob(image: Blob, mentor: any) {
-    
 
-    let reader = new FileReader();
-    reader.addEventListener(
-      "load",
-      () => {
-        mentor.url = reader.result;
-      },
-      false
-    );
-    if (image) {
-      reader.readAsDataURL(image);
-    }
-  }
   public message:any;
   public showNumber:boolean=false;
   requestMentor(mentor: any) {
-    // ////console.log(mentor._id);
-    // ////console.log(mentor);
+
     return this.authService.registerJob(mentor).subscribe(data=>{
       if(data['success']){
         this.showNumber = true;
@@ -350,17 +271,20 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
       this.router.navigate(["/mentor", mentorId]);
     }
   }
+  ratingComponetClick(clickObj: any): void {
 
+  }
+  insertRate(mentor){
+    this.commentService.getRate(mentor.id)
+    .subscribe(data=>{
+      if(data['success']){
+        mentor.currentRate = data['rate']
+      }
+      else{
+        mentor.currentRate = 0;
+      }
+      
+    })
+  }
 
-
-
-
-
-    //   Selected(item: SelectedAutocompleteItem) {
-    //     this.searchForm.controls['subject'] = this.fb.array([...this.searchForm.controls['subject']
-    //       .value, item.item.original]);
-        
-    //     ////console.log(item.item.id);
-    //     this.code = item.item.id
-    // }
 }

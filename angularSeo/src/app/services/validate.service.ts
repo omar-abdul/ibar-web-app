@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { parse, format, asYouType, isValidNumber } from "libphonenumber-js";
+import { parse, format,  isValidNumber } from "libphonenumber-js";
 
 @Injectable()
 export class ValidateService {
@@ -56,7 +56,7 @@ if (
   validatePhoneNumber(phoneNumber) {
  
     let parsed = parse(phoneNumber);
-    console.log(parsed)
+    
   
 
     return isValidNumber(parsed.phone,'SO')

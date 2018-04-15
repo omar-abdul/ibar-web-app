@@ -1,0 +1,75 @@
+.pic {
+    border-radius: 50%;
+    background-color: #cccccc;
+    width: 2em;
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #ffffff;
+    box-shadow: 0px 0px 6px rgba(20, 20, 20, 0.6);
+    padding: 10px;
+    margin-top: 20px;
+  }
+h2{
+    font-size:1.2em;
+    margin:auto;
+    margin-top:50px;
+}
+
+    .small-star{
+        position: absolute;
+        margin:0 auto;
+        left:100px;
+    }
+    
+
+    .comment-section h4{
+        font-size:1em;
+        font-weight: normal;
+    }
+    .comment-section{
+        padding:10px;
+    
+    }
+    .comment-info{
+        padding:5px;
+        margin:10px 10px auto;
+    
+    }
+    .comment-content{
+        position: relative;
+        
+        
+        padding: 0px 20px;
+        margin: 15px;
+       
+        
+        bottom: 15px;
+        
+        
+        
+    
+    }
+    .comment-text{
+        position: absolute;
+        top:30px;
+        left:100px;
+    }
+    .comment-container{
+        padding:0;
+        margin:20px;
+        display:flex;
+        flex-direction: column;
+        justify-content: flex-start
+    }
+    hr {
+        display: block;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid #ccc;
+        margin: 1em 0;
+        padding: 0;
+    }
+    

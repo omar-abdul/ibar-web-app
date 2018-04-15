@@ -1,0 +1,132 @@
+<div *ngIf='statusOk'>
+  <app-resend-token></app-resend-token>
+</div>
+<div class="alert alert-danger" *ngIf='!registered'>
+  <p> {{message}}</p>
+</div>
+<div class="card card-body bg-light mb-5">
+
+
+  <h3>Register</h3>
+  <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+    <div class="form-group">
+      <label for="inputUsername">Full Name</label>
+      <input type="text" formControlName = 'name' id="inputUsername"
+       class="form-control"  placeholder="Enter full name" />
+       
+       <div class="alert alert-danger" *ngIf="name.invalid && (name.dirty || name.touched)">
+          <div *ngIf="name.errors.required">
+            Name field cannot be empty 
+          </div>
+          <div *ngIf="name.errors.minlength">
+            Name should be at least 4 characters long
+          </div>
+
+    </div>
+
+
+    </div>
+    <div class="form-group">
+      <label for="inputEmail">Email</label>
+      <input type="text" formControlName = 'email' id="inputEmail" class="form-control" placeholder="example@example.com"
+      />
+      <div class="alert alert-danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+        <div *ngIf="email.errors?.required">
+          Email field cannot be empty 
+        </div>
+        <div *ngIf="email.errors?.pattern">
+          Email should be a valid email address
+        </div>
+  
+      </div>
+    </div>
+    <label for="inputNum">Phone Number</label>
+    <div class="input-group">
+
+
+      <span class="input-group-addon">
+        <i #code>+252</i>
+      </span>
+      <input type="text" formControlName = 'phoneNumber' id="inputNum" class="form-control"  placeholder="e.g 63444444"
+      />
+
+    </div>
+    <div class="alert alert-danger" *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)">
+        <div *ngIf="phoneNumber.errors.required">
+          Phone Number field cannot be empty 
+        </div>
+        <div *ngIf="phoneNumber.errors.validNumber">
+          Number must be a valid number in the Somali region
+        </div>
+  
+      </div>
+    <div formGroupName='password'>
+
+      <div class="form-group">
+        <label for="inputPassword">Password</label>
+        <input type="password" formControlName = 'pass' class="form-control" id="inputPassword" placeholder="Enter password" />
+        <ng-container *ngIf="password.invalid && (password.dirty || password.touched)"> 
+            <ng-container *ngIf="password.get('pass').errors?.minlength">
+                <div class="alert alert-danger"> Password must be at least 8 characters long</div>
+            </ng-container>
+      </ng-container>
+        
+      
+      </div>
+
+
+      <div class="form-group">
+        <label for="conPassword"> Confirm Password</label>
+        <input type="password" formControlName ='confirmPass' class="form-control" id="conPassword" placeholder="Confirm Passsword" />
+        <ng-container *ngIf="password.invalid && (password.dirty || password.touched)"> 
+            <ng-container *ngIf="password.errors?.mismatch">
+                <div class="alert alert-danger"> Passwords entered don't match</div>
+            </ng-container>
+        </ng-container>
+
+
+      </div>
+ 
+
+  
+    </div>
+
+
+    <div class="form-group">
+      <label for="inputCity">City</label>
+      <input class="form-control" formControlName="city_name"
+       id ="inputCity" #city placeholder="Which city are you available in?"> 
+
+       <div class="alert alert-danger" *ngIf="city_name.invalid &&(city_name.dirty || city_name.touched)">
+          <div *ngIf="city_name.errors.required">
+            City field must not be empty
+          </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+      <label for="inputSubject">Main subject you want to teach </label> <span class=" small text-info">
+        *You can add more subjects from your dashboard
+        </span>
+      <select class="form-control" id="inputSubject" formControlName='subject' aria-placeholder="Select subject">
+          <option value='' disabled selected hidden>Choose a subject</option>
+        <option *ngFor="let sub of subArr"  
+          [value]="sub.subject_id"> {{sub.name}}
+          </option>
+
+      </select>
+    </div>
+    <div class="text-danger" *ngIf="subject.invalid &&(subject.dirty || subject.touched)">
+        <div *ngIf="subject.errors.required">
+          *At least one subject must be entered
+        </div>
+      </div>
+    <input type="hidden" formControlName = 'role'>
+
+    <div class="form-group">
+      <Button type="submit" [disabled]="!registerForm.valid" class="btn btn-primary">Register</Button>
+
+    </div>
+  </form>
+</div>

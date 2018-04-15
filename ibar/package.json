@@ -3,29 +3,38 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "test": "SET NODE_ENV=test & mocha \"./components/**/user.spec.js\" -t 10000",
+    "test-coverage": "SET NODE_ENV=test & istanbul cover ./node_modules/mocha/bin/_mocha \"./components/**/user.spec.js\" -- -R spec -t 15000"
   },
   "dependencies": {
     "bcryptjs": "*",
-    "body-parser": "~1.17.1",
-    "cloudinary": "^1.9.1",
+    "body-parser": "~1.18.2",
+    "cloudinary": "^1.10.0",
     "cookie-parser": "~1.4.3",
     "cors": "*",
-    "debug": "~2.6.3",
-    "dotenv": "^4.0.0",
-    "express": "*",
-    "express-validator": "^4.3.0",
-    "google-libphonenumber": "^3.0.10",
-    "helmet": "^3.9.0",
-    "jsonwebtoken": "*",
-    "libphonenumber-js": "^0.4.48",
-    "morgan": "~1.8.1",
+    "debug": "~3.1.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
+    "express-validator": "^5.0.2",
+    "google-libphonenumber": "^3.1.0",
+    "helmet": "^3.11.0",
+    "jsonwebtoken": "^8.1.1",
+    "libphonenumber-js": "^1.0.24",
+    "morgan": "~1.9.0",
     "multer": "^1.3.0",
-    "nodemailer": "^4.4.1",
+    "nodemailer": "^4.6.0",
     "nodemailer-mailgun-transport": "^1.3.6",
     "passport": "*",
     "passport-jwt": "*",
-    "pg": "^7.4.0",
-    "serve-favicon": "~2.4.2"
+    "pg": "^7.4.1",
+    "serve-favicon": "~2.5.0",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.0.5",
+    "supertest": "^3.0.0"
   }
 }

@@ -1,0 +1,11 @@
+<div *ngIf = 'statusOk' class="alert alert-success">
+  <p>Congratulations, a confirmation letter has been sent to the email you provided</p>
+  <p>If you have not recieved an email <button class="btn btn-link" style="padding:0" (click)=resendToken()>
+    try resending
+
+  </button>
+</p>
+  </div>
+  <div *ngIf='!statusOk' class="alert alert-danger">
+    {{message}}
+  </div>

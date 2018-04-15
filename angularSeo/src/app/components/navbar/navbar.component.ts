@@ -14,10 +14,10 @@ import { AuthService } from "../../services/auth.service";
 })
 export class NavbarComponent implements OnInit {
   isHomePage = false;
-  name:string;
-  nameTemp:string;
-  mentor:any;
-  navbarCollapsed:boolean=true;
+  name: string;
+  nameTemp: string;
+  mentor: any;
+  navbarCollapsed: boolean = true;
   constructor(public authService: AuthService, private router: Router) {
     router.events.forEach((event: NavigationEvent) => {
       if (event instanceof NavigationStart) {
@@ -30,45 +30,11 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
- 
-
-  }
-//   ngAfterContentChecked(){
-//      if(this.authService.loggedIn()){
-//        this.authService.loadToken();
-
-//       console.log(this.authService.user);
-//       var temp = this.authService.user.name.toString();
-//       var string = temp.split(" ");
-//       var i = 0;
-//       this.name=string[0].toLocaleLowerCase();
-//       for(var i = 0; i<string.length;i++){
-//         console.log(string[i]);
-//         if(string.length>1)
-//         {
-//          this.name+="-"+string[i+1].toLocaleLowerCase();
-//          break;
-//         }
-//         else
-//         {
-//           this.name = string[i].toLocaleLowerCase();
-//         }
-
-//         if(temp!==this.name){
-//           this.router.navigate(['error-page'])
-//         }
-
-
-
-
-//     }
-//   }
-// }
+  ngOnInit() {}
+  
   onLogOutClick() {
     this.authService.logOut();
     this.router.navigate(["/"]);
     return false;
   }
-
 }

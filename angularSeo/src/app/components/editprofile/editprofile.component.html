@@ -1,101 +1,118 @@
 <div class="container">
-	<div *ngIf="updated && success" class="alert alert-success"><div class="text-center">
-		{{message}}
-	</div>
+  <div *ngIf="updated && success" class="alert alert-success">
+    <div class="text-center">
+      {{message}}
+    </div>
+  </div>
+  <div *ngIf="updated && !success" class="alert alert-danger">
+    <div class="text-center">
+      {{message}}
+    </div>
+  </div>
+  <div class="profile">
+
+
+    <div class="pic" *ngIf="!imageurl">
+
+
+      {{user?.initial}}
+
+    </div>
+
+    <img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
+
+
+
+
+
+
+
+
+    <ng-container *ngIf="authService.isMentor()">
+      <div style="display: inline-flex;">
+        <input id="fileInput" class="file-upload" type="file" #fileInput class="form-control">
+      </div>
+      <button class="btn submit-btn" (click)="upload()">Upload </button>
+    </ng-container>
+
+    <div></div>
+    <div class="profile-info">
+      <ng-template #rt let-r="result" let-t="term">
+        {{ r.name}}
+      </ng-template>
+      <form [formGroup]="editForm" novalidate enctype="multipart/form-data">
+
+
+
+
+        <div class="form-group">
+          <ng-container *ngIf="authService.isMentor()">
+            <h2> About </h2>
+            <textarea #about class="form-control" cols="30" rows="5">{{user?.about}}</textarea>
+          </ng-container>
+          <h2> Phone Number </h2>
+          <div class="input-group">
+
+
+            <span class="input-group-addon">
+              <i #code>+252</i>
+            </span>
+            <input class="form-control" #phoneNumber formControlName="phoneNumber" placeholder="6344444">
+          </div>
+
+
+          <ng-container *ngIf="authService.isMentor()">
+            <h2> City </h2>
+            <input class="form-control" #city size="30" autocorrect="off" autocapitalize="off" spellcheck="off" formControlName="city"
+            />
+
+
+            <h2>Subjects</h2>
+            <p>
+              <a class="edit" (click)="showField=!showField"> Add Subject </a>
+            </p>
+            <ng-template #rt let-r="result" let-t="term">
+              
+              {{r.name}}
+            </ng-template>
+            <ng-container *ngIf="showField">
+              <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="searchSub" [resultTemplate]="rt"
+              [inputFormatter]="formatter" placeholder="Enter subject name"
+                formControlName='subject' (selectItem)="Selected($event)" />
+            </ng-container>
+
+            <div *ngFor="let sub of user?.subjects" class="profile-subject">
+              {{sub}}
+              <span class="close" (click)="deleteSubject(sub)">&times;</span>
+            </div>
+          </ng-container>
+
+
+
+        </div>
+
+        <button type="button" (click)="updateUser()" class="btn btn-primary">Save</button>
+        <a routerLink="/profile" class="btn btn-danger">Cancel</a>
+        <div *ngIf="isLoading" class="text-center" style="z-index: 9999">
+          <img class="middle-rolling" src="/assets/images/Rolling.gif">
+        </div>
+
+
+
+
+
+
+      </form>
+    </div>
+  </div>
 </div>
-<div *ngIf="updated && !success" class="alert alert-danger"><div class="text-center">
-		{{message}}
-	</div>
+<div *ngIf="updated && success" class="alert alert-success">
+  <div class="text-center">
+    {{message}}
+  </div>
 </div>
-	<div  class="profile">
-
-
-						<div class="pic" *ngIf="!imageurl">
-							
-
-							{{user?.initial}}
-							
-						</div>
-
-<img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
-
-
-
-
-
-		
-
-
-	<ng-container *ngIf="authService.isMentor()" >
-			<div style="display: inline-flex;"><input id="fileInput"  class="file-upload"   type="file" #fileInput class="form-control"></div>
-			<button class="btn submit-btn"   (click)="upload()">Upload </button>
-	</ng-container>
-
-	<div></div>
-	<div class="profile-info">
-<ng-template #rt let-r="result" let-t="term">
-  {{ r.name}}
-</ng-template>
-		<form [formGroup]="editForm" novalidate   enctype="multipart/form-data">
-			<ng-container *ngIf='!authService.isVerified()'> 
-					<div class="alert alert-danger">
-						Verify your account to edit your profile
-					</div>
-				</ng-container>	
-			
-
-	<ng-container *ngIf='authService.isVerified()'>
-			<div class="form-group">
-					<ng-container *ngIf="authService.isMentor()"><h2> About </h2>
-						<textarea #about class="form-control" cols="30" rows="5">{{user?.about}}</textarea></ng-container>
-					<h2> Phone Number </h2>
-					<div class="input-group">
-			
-				  
-							<span class="input-group-addon" ><i #code>+252</i></span><input  class="form-control" #phoneNumber  formControlName="phoneNumber" placeholder="6344444" >
-							</div>
-					
-					
-					<ng-container *ngIf = "authService.isMentor()">
-					<h2> City </h2>		
-				  <input  class="form-control" #city size="30" autocorrect="off" autocapitalize="off" spellcheck="off" formControlName="city"  />
-					
-							<h2>Subjects</h2>
-							<p><a class="edit" (click)="showField=!showField"> Add Subject </a></p>
-							<ng-container *ngIf="showField"> <!-- <ng-autocomplete   (selected)="Selected($event)" [classes]="['']" [group]="group"></ng-autocomplete> -->
-									<input id="typeahead-basic" type="text" class="form-control"  [(ngModel)]="model"
-						[ngbTypeahead]="searchSub" placeholder="Enter subject name"  formControlName='subject'
-						(selectItem)="Selected($event)" />
-							</ng-container>
-							
-								<div *ngFor="let sub of user?.subjects" class="profile-subject">
-									{{sub}} <span class="close"  (click)="deleteSubject(sub)">&times;</span>
-					</div>
-					</ng-container>
-			
-			
-							
-						</div>
-			
-						<button type="button" (click)="updateUser()" class="btn btn-primary">Save</button>
-						<a  routerLink="/profile" class="btn btn-danger">Cancel</a>
-						<div *ngIf ="isLoading" class="text-center" style="z-index: 9999"><img class="middle-rolling" src ="/assets/images/Rolling.gif"></div>		
-		
-	</ng-container>						
-
-
-
-
-</form>
+<div *ngIf="updated && !success" class="alert alert-danger">
+  <div class="text-center">
+    {{message}}
+  </div>
 </div>
-</div>
-</div>
-<div *ngIf="updated && success" class="alert alert-success"><div class="text-center">
-		{{message}}
-	</div>
-</div>
-<div *ngIf="updated && !success" class="alert alert-danger"><div class="text-center">
-		{{message}}
-	</div>
-</div>
-
