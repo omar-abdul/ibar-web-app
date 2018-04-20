@@ -151,6 +151,21 @@ module.exports.comparePassword = async function (txtPassword, hashedPassword) {
   return isMatch;
 
 };
+module.exports.addRefreshToken = async function(token,id){
+  const query = "UPDATE users SET refresh_token = $1 ,date_issued = $3 WHERE id = $2";
+  const client = await pool.connect();
+  try {
+    const result = await client.query(query, [token,id,new Date(Date.now())]);
+    return result.rowCount;
+
+  }catch(e){
+    throw new DatabaseError("There was an error connecting or querying the database : "+ e.message);
+
+  }finally {
+    client.release();
+
+  }
+}
 module.exports.getUserVerificationStatus = async function (id){
   const client = await pool.connect();
   const query = " SELECT is_verified FROM users WHERE id = $1";
@@ -270,6 +285,21 @@ module.exports.addJob = async function (mentor, student){
   }
 
 }
+module.exports.deleteRefreshTk=async function(id){
+  const client = await pool.connect();
+
+  const query = `UPDATE users SET refresh_token = NULL  WHERE id=$1`;
+  try{
+    const results = await client.query(query,[id]);
+    return results;
+  }catch(e){
+    throw new DatabaseError("There was an error connecting or querying the database : "+ e.message);
+
+  }finally {
+    client.release();
+
+  }
+}
 module.exports.getJobByUserId = async function (user){
   const client = await pool.connect();
   let id;
@@ -280,8 +310,8 @@ module.exports.getJobByUserId = async function (user){
   }
   const query = `SELECT * FROM jobs WHERE ${id}=$1`;
   try{
-    console.log(id);
-    console.log(user.id);
+    //.log(id);
+    //.log(user.id);
     const results = await client.query(query,[user.id]);
     return results.rows;
   }catch(e){
@@ -337,7 +367,20 @@ module.exports.getUserByRole = async function(email,role){
 
   }
 };
+module.exports.getByRefreshToken =  async function(token){
+const client  = await pool.connect();
+const query = 'SELECT * FROM users WHERE refresh_token=$1';
+try{
+  const result = await client.query(query,[token]);
+  return result.rows[0];
+}catch(e){
+  throw new DatabaseError("There was an error connecting or querying the database : "+ e.message);
 
+}finally {
+  client.release();
+
+} 
+}
 module.exports.getSubjects = async function(){
   const client = await pool.connect();
   const query = 'SELECT * FROM subjects'

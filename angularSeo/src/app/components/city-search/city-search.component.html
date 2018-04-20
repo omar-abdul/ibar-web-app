@@ -1,0 +1,9 @@
+<div *ngIf='city_name.invalid &&(city_name.dirty || city_name.touched)' class="invalid-feedback">
+    <div *ngIf='city_name.errors.required'>
+            Please enter a valid city.
+    </div>
+        
+</div>
+
+<input class="form-control" [ngClass]="{'is-invalid':city_name.invalid &&(city_name.dirty || city_name.touched)}"  size="30" autocorrect="off" autocapitalize="off" spellcheck="off" 
+#search [formControl]='city_name' placeholder="Enter city name"/>

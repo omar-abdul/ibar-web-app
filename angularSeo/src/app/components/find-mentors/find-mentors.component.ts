@@ -55,6 +55,7 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
    public items:any[];
    public percentRate = 0;
    subjectArray:any[]=[];
+   subModel:string
   
 
   
@@ -75,43 +76,44 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     private ls:LoadingService,
     private commentService:CommentService
   ) {
-    this.createForm();
+  
     ls.onLoadingChanged.subscribe(isLoading=>this.isLoading=isLoading);
 
-        data.getAllSubjects().subscribe(data=>{
-          this.subjectArray = data['subjects'].slice(0,data['subjects'].length);
-    
+    route.params.subscribe(params=>{
+      if(params['lng'] && params['lat']){
+        this.model={
+          name:params['subject']
+        }
+      
+       const lat = params['lat']||this.latitude
+       const lng = params['lng']||this.longtitude
+       const sub = params['subject']||''
+        this.getCloseMentors(lng,lat,sub).subscribe(_=>{
+
         })
+      }
+    })
 
   }
 
-  createForm() {
-    this.searchForm = this.fb.group({
-      city: "",
-      subject:""
-    });
-  }
 
-formatter=(result:any)=>result.name;
 
-   searchSub= (text$:Observable<string>)=>
-      text$
-      .debounceTime(200)
-      .map(term => term === '' ? []
-        : this.subjectArray
-        .filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10));
+
    
 
   ngAfterViewChecked() {
 
-    if (this.searchRef.nativeElement.value == "") {
-      this.latitude = 0;
-      this.longtitude = 0;
-    }
   }
 
   ngOnInit() {
     this.items = [];
+    if(this.country ===''){
+      this.latitude = 0;
+      this.longtitude = 0;
+      return ;
+    }
+
+
 
     this.returnUrl = this.route.snapshot.queryParams["returnUrl"] || "/";
     if (this.authService.isMentor()) {
@@ -119,45 +121,40 @@ formatter=(result:any)=>result.name;
     }
 
     this.data.currentCountry.subscribe(country => {
-      this.searchForm.controls['city'].setValue(country)
+      
       this.country = country;
     });
 
     this.data.currentLat.subscribe(lat => (this.latitude = lat));
     this.data.currentLng.subscribe(lng => (this.longtitude = lng));
-    this.data.currentSub.subscribe(sub=>(this.model = sub));
-    if (this.longtitude != undefined && this.latitude != undefined) {
-      this.getCloseMentors().subscribe(async _ => {
+    // this.data.currentSub.subscribe(sub=>{
+     
+    //     this.model ={
+    //       name:sub
+    //     } 
+    //     console.log(this.model+'Observake')
+   
+    // });
+    // if (this.longtitude != undefined && this.latitude != undefined) {
+    //   this.getCloseMentors().subscribe(async _ => {
 
-      });
+    //   });
+    // }
+
+  }
+
+  getCity($event){
+    this.latitude = $event.lat;
+    this.longtitude = $event.lng;
+    this.country = $event.city || ''
+  }
+
+  getSubject($event){
+    
+    this.model ={
+      name: $event.name ||''
     }
-    this.mapsApiLoader.load().then(() => {
-      let cp: google.maps.places.ComponentRestrictions;
-      cp = {
-        country: ["so"]
-      };
-
-      let autocomplete = new google.maps.places.Autocomplete(
-        this.searchRef.nativeElement,
-        {
-          types: ["(regions)"],
-          strictBounds: true,
-          componentRestrictions: cp
-        }
-      );
-
-      autocomplete.addListener("place_changed", () => {
-        this.ngZone.run(() => {
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-
-          if (place.geometry === null || place.geometry === undefined) {
-            return;
-          }
-          this.latitude = place.geometry.location.lat();
-          this.longtitude = place.geometry.location.lng();
-        });
-      });
-    });
+  
   }
   getExcerpt(sentence:string){
     
@@ -185,17 +182,26 @@ formatter=(result:any)=>result.name;
       user.initial = user.initial.toUpperCase();
 
   }
-  joinText(arr:string[]){
-    let string = arr.join(",")
+  joinText(subs:any){
+    let string
+    if(Array.isArray(subs)){
+      string = subs.join(",")
+    }else string = subs
+
+
+    
     return this.getExcerpt(string);
 
   }
 
-  getCloseMentors(){
+  getCloseMentors(lng,lat,subject){
+    // if(this.longtitude ===null ||  this.longtitude ==undefined ||this.latitude===null ||this.longtitude==undefined){
+    //   return;
+    // }
 
     this.mentors = [];
     return this.locationservice
-    .getNearbyMentors(this.longtitude, this.latitude,this.model)
+    .getNearbyMentors(lng, lat,subject)
     .map(data => {
 
       if (data['success']) {
@@ -225,66 +231,29 @@ formatter=(result:any)=>result.name;
                mentor.imageurl=await this.getImage(url);
    
              }
-             mentor.stars =4;
+            
            };
 
         });
         
       }
-      else{console.log(data['res'])}
+      // else{console.log(data['res'])}
     });
 
   }
 
 
   findMentors() {
-
-    if (this.latitude !== 0 && this.longtitude !== 0) {
-
-
-      this.getCloseMentors().subscribe(async _ => {
-        
-      });
-    }
+    this.router.navigate(['find-mentors',{lng:this.longtitude,lat:this.latitude,subject:this.model.name||''}]);
   }
 
 
-  public message:any;
-  public showNumber:boolean=false;
-  requestMentor(mentor: any) {
 
-    return this.authService.registerJob(mentor).subscribe(data=>{
-      if(data['success']){
-        this.showNumber = true;
-        this.mentorService.sendBoolean(this.showNumber)
-        this.mentorService.sendNumber(mentor.phone_number);
-        this.message = mentor.phone_number;
-      }
-      else{
-        this.showNumber = true;
-        this.message = data['msg']
-      }
-    })
-}
   viewMentor(mentorId: any) {
     if (mentorId) {
       this.router.navigate(["/mentor", mentorId]);
     }
   }
-  ratingComponetClick(clickObj: any): void {
 
-  }
-  insertRate(mentor){
-    this.commentService.getRate(mentor.id)
-    .subscribe(data=>{
-      if(data['success']){
-        mentor.currentRate = data['rate']
-      }
-      else{
-        mentor.currentRate = 0;
-      }
-      
-    })
-  }
 
 }

@@ -1,0 +1,6 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.name}}
+  </ng-template>
+
+  <input #subRef id="typeahead-basic" type="text" class="form-control" [formControl]='subjectControl' [ngbTypeahead]="searchSub" [resultTemplate]="rt" 
+  [inputFormatter]="formatter"(selectItem)='Selected($event)' placeholder="Enter subject name" />

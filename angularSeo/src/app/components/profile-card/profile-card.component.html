@@ -1,0 +1,68 @@
+<div *ngIf='isMentor; then mentor; else student'></div>
+
+
+
+  <ng-template #mentor>
+    <div class="card-deck">
+      <div class="card text-white text-center bg-dark">
+        <div class="card-image text-center">
+          <div *ngIf="user?.imageurl">
+            <img [src]="user?.imageurl" width="100" height="100" class="center-cropped" style="border-radius:50%">
+
+          </div>
+
+          <div *ngIf="!user?.imageurl" class='pic '>
+            {{user?.initial}}
+
+          </div>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title">{{user?.name}}</h5>
+          <p class="card-text">
+
+            <td>
+              <tr>
+                <app-star class="center" [rating]='user?.rate' [itemId]="user?.id" [inputWidth]="80" [inputHeight]="20" [inputFontSize]="20"></app-star>
+              </tr>
+            </td>
+          </p>
+        </div>
+        <div *ngIf='!isProfile'>
+          <div class="card-footer">
+            <button class="btn btn-danger" [ng-modal]="user" [isFlag]="true" style="width:100%">&#10084; Rate </button>
+            <button class="btn hire-btn" [ng-modal]="user" [isFlag]="false" style="width:100%" (ng-modalSubmit)="requestMentor($event)"> Hire Mentor</button>
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </ng-template>
+
+
+
+
+
+
+  <ng-template #student>
+    <div class="card-deck">
+      <div class="card text-white  text-center bg-dark">
+        <div class="card-image text-center">
+          <div *ngIf="user?.imageurl">
+            <img [src]="user?.imageurl" width="100" height="100" class="center-cropped">
+
+          </div>
+
+          <div *ngIf="!user?.imageurl" class='pic '>
+            {{user?.initial}}
+
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{user?.name}}</h5>
+        </div>
+      </div>
+    </div>
+  </ng-template>

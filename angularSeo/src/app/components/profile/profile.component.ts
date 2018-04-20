@@ -65,6 +65,19 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  getMentorProfile(){
+    this.authService.loadToken();
+  
+    return this.authService.getMentorDetail(this.authService.user.id).map(async data => {
+      if(data['user']){
+
+        this.user.subjects = data["user"].subjects
+      }
+
+    });
+
+  }
+
 
 
   placeHolderImage(user) {
@@ -78,32 +91,42 @@ export class ProfileComponent implements OnInit {
     user.initial = user.initial.toUpperCase();
   }
   public jobs: any[] = [];
-  getJobHistory() {
-    this.showProfile = false;
-    return this.authService.getJobHistory().subscribe(data => {
-      if (data["success"]) {
-        //consolelog(data['job']);
+  // getJobHistory() {
+   
+  //   return this.authService.getJobHistory().subscribe(data => {
+  //     this.showProfile= false;
+  //     if (data["success"]) {
+  //       //consolelog(data['job']);
 
-        this.jobs.push(...data["job"]);
-        //consolelog(this.jobs)
-      } else {
-        this.isHistory = false;
-      }
-    });
-  }
+  //       this.jobs.push(...data["job"]);
+  //       //consolelog(this.jobs)
+  //     } else {
+  //       this.isHistory = false;
+  //     }
+  //   });
+  // }
 
   ngOnInit() {
     this.showFile = false;
 
+
     this.user_data = [];
+
+      
     this.getUserProfile().subscribe(_ => {
+      if(this.authService.isMentor()){
+        this.getMentorProfile().subscribe(_=>{
+  
+        })
+  
+      }
+
+
       this.user_data.push(this.user);
       this.cdRef.detectChanges();
     });
+
+    }
+
   }
-  @ViewChild("avatar") avatar;
-  @ViewChild("phoneNumber") phoneNumberRef: ElementRef;
 
-
- 
-}

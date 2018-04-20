@@ -6,7 +6,7 @@ import {
   NgZone,
   ElementRef,
   ChangeDetectorRef,
-  AfterContentChecked
+  AfterViewInit
 } from "@angular/core";
 import { MentorService } from "../../services/mentor-service.service";
 import { AuthService } from "../../services/auth.service";
@@ -15,7 +15,7 @@ import { FormBuilder, FormGroup, FormArray } from "@angular/forms";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import {} from "googlemaps";
 import { MapsAPILoader } from "@agm/core";
-import { HttpClient } from "@angular/common/http";
+
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { LoadingService } from "../../services/loading.service";
@@ -27,6 +27,7 @@ import "rxjs/add/observable/interval";
 import "rxjs/add/operator/takeWhile";
 import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
+import {CitySearchComponent} from "../city-search/city-search.component"
 import * as sitewide from "../../constants";
 
 // import {CreateNewAutocompleteGroup, SelectedAutocompleteItem, NgAutocompleteComponent} from "ng-auto-complete";
@@ -36,7 +37,7 @@ import * as sitewide from "../../constants";
   templateUrl: "./editprofile.component.html",
   styleUrls: ["./editprofile.component.css"]
 })
-export class EditprofileComponent implements OnInit {
+export class EditprofileComponent implements OnInit ,AfterViewInit{
   id: string;
   user: any;
   isImage: boolean;
@@ -55,16 +56,14 @@ export class EditprofileComponent implements OnInit {
 
   constructor(
     private mentorService: MentorService,
-    @Inject(PLATFORM_ID) private platformID: Object,
-    private ngZone: NgZone,
-    private mapsApiLoader: MapsAPILoader,
+
     public authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-    private http: HttpClient,
+
     private loadingService: LoadingService,
     private data: DataService
   ) {
@@ -80,72 +79,36 @@ export class EditprofileComponent implements OnInit {
   createForm() {
     this.editForm = this.fb.group({
       phoneNumber: "",
-      city: "",
-      subject: ""
+ 
+      
     });
   }
-
-  @ViewChild("city") searchElementRef: ElementRef;
+@ViewChild(CitySearchComponent) child;
+  
 
   public model: any;
-  formatter = (result: any) => result.name;
 
-  searchSub = (text$: Observable<string>) =>
-    text$
-      .debounceTime(200)
-      .map(
-        term =>
-          term === ""
-            ? []
-            : this.subjectArray
-                .filter(
-                  v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1
-                )
-                .slice(0, 10)
-      );
 
-  ngOnInit() {
-    this.getUser().subscribe(_ => {
-      // console.log(this.user.city_name)
-      this.editForm.setValue({
-        phoneNumber: this.user.phone_number || "",
-        city: this.user.city_name || "",
-        subject: ""
-      });
-    });
-
-    if (this.authService.isMentor() && this.authService.isVerified()) {
-      if (isPlatformBrowser(this.platformID)) {
-        this.mapsApiLoader.load().then(() => {
-          let cp: google.maps.places.ComponentRestrictions;
-          cp = {
-            country: ["so"]
-          };
-
-          let autocomplete = new google.maps.places.Autocomplete(
-            this.searchElementRef.nativeElement,
-            {
-              types: ["(regions)"],
-              strictBounds: true,
-              componentRestrictions: cp
-            }
-          );
-
-          autocomplete.addListener("place_changed", () => {
-            this.ngZone.run(() => {
-              let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-
-              if (place.geometry === null || place.geometry === undefined) {
-                return;
-              }
-              this.latitude = place.geometry.location.lat();
-              this.longtitude = place.geometry.location.lng();
-              this.cityName = place.formatted_address;
-            });
+      ngAfterViewInit(){
+        this.getUser().subscribe(_ => {
+          
+    
+          this.cityName = this.user.city_name;
+         
+         
+          
+          this.editForm.setValue({
+            phoneNumber: this.user.phone_number || "",
+    
+            
           });
         });
+
       }
-    }
+
+  ngOnInit() {
+
+
   }
 
   @ViewChild("fileInput") fileInput;
@@ -181,7 +144,7 @@ export class EditprofileComponent implements OnInit {
   }
 
   getUser() {
-    return this.authService.getProfile().map(async data => {
+    return this.authService.getProfile().map(async (data) => {
       //console.log(data);
 
       if (data["success"]) {
@@ -202,9 +165,15 @@ export class EditprofileComponent implements OnInit {
           this.imageurl = await this.sanitizer.bypassSecurityTrustUrl(url);
         }
       } else {
-        this.router.navigate(["/error-page"]);
+        this.router.navigate(['/login']);
       }
     });
+  }
+
+  getCity($event){
+    this.cityName = $event.city;
+    this.latitude = $event.lat;
+    this.longtitude = $event.lng;
   }
 
   placeHolderImage(user) {
@@ -289,15 +258,15 @@ export class EditprofileComponent implements OnInit {
   }
 
   checkSubject(subject: any) {
-    var temp = {
-      name: subject.name,
-      code: subject.code
-    };
+    // var temp = {
+    //   name: subject.name,
+    //   code: subject.code
+    // };
     var isSub: boolean;
     //console.log(temp)
     //console.log(this.subjects)
     for (var i = 0; i < this.user.subjects.length; i++) {
-      if (this.user.subjects[i] != subject.name) {
+      if (this.user.subjects[i] != subject) {
         isSub = false;
       } else {
         isSub = true;
@@ -307,6 +276,15 @@ export class EditprofileComponent implements OnInit {
     }
 
     return isSub;
+  }
+  getSubject($event){
+    if(Array.isArray(this.user.subjects)&&!this.user.subjects.length){
+      this.user.subjects =[];
+      this.user.subjects.push($event.name);
+
+    }else if(this.user.subjects && !this.checkSubject($event.name)){
+      this.user.subjects.push($event.name);
+    }
   }
 
   Selected(item: any) {

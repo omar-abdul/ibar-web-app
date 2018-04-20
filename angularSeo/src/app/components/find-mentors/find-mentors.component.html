@@ -6,17 +6,14 @@
 
 
   <div class="fil-form">
-    <form [formGroup]="searchForm" novalidate class="form-inline" (submit)="findMentors()">
+    <form  novalidate class="form-inline" (submit)="findMentors()">
       <div class="form-group">
-        <input class="form-control" #search size="30" placeholder="Enter city name" autocorrect="off" autocapitalize="off" spellcheck="off"
-          formControlName="city" />
+        <city-search [city]='country '(cityEvent)="getCity($event)"></city-search>
       </div>
       <div class="form-group">
+        <subject-search [subject]="model" (subjectEvent)='getSubject($event)'></subject-search>
 
-        <!-- 		<ng-autocomplete   (selected)="Selected($event)" [classes]="['']" [group]="group"></ng-autocomplete> -->
-        <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="searchSub" [resultTemplate]="rt"
-        [inputFormatter]="formatter" placeholder="Enter subject name"
-          formControlName="subject" />
+
 
       </div>
 
@@ -32,62 +29,8 @@
     <img class="middle-rolling" src="/assets/images/Rolling.gif">
   </div>
 
-  <div *ngFor="let mentor of mentors; let idx = index " [attr.data-index]="idx">
-    <div class="card-mentor">
-      <div class="card-info">
-        <div class="row">
-          <div class="col-sm-8">
-            <tr>
-              <td>
-                  <app-star [rating]='mentor?.rate' [itemId]="mentor?.id" [inputWidth]="80" [inputHeight]="20"
-                  [inputFontSize]="20" class="small-star"></app-star>
-                </td>
-                
-              </tr>
-            <div *ngIf="!mentor?.imageurl" class="pic">
-
-
-              {{mentor?.initial}}
-
-            </div>
-            
-
-
-
-
-            <ng-container *ngIf="mentor?.imageurl">
-              <img class="centered-cropped" [src]='mentor?.imageurl' width="120" height="120" style="border-radius: 50%">
-            </ng-container>
-            
-
-
-
-
-
-
-            <div class="title">
-              <h1>{{mentor?.name}}</h1>
-              <h5>{{mentor?.subjects}}</h5>
-
-              <h3>{{mentor?.about}}</h3>
-
-            </div>
-          </div>
-
-          <div class="col-sm-4">
-            <button class="hirebtn" [ng-modal]="mentor" (ng-modalSubmit)="requestMentor($event)">Hire</button>
-            <a class="hirebtn" routerLink="/mentor/{{mentor?.id}}">View more</a>
-          </div>
-        </div>
-
-      </div>
-
-
-
-
-    </div>
-
-
+  <div>
+    <mentor-card *ngFor="let mentor of mentors" [mentor]='mentor'></mentor-card>
   </div>
 
 

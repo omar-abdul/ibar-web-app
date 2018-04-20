@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
   check: boolean;
   public latitude: number;
   public longtitude: number;
-  countryname: any;
+  city: string;
   public slideLeft = false;
   public model: any;
   public searchForm: FormGroup;
@@ -50,88 +50,40 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder
   ) {
-    this.createForm();
-
-
+  
   }
-  createForm() {
-    this.searchForm = this.fb.group({
-      city: "",
-      subject: ""
-    });
-  }
-  formatter = (result:any)=>result.name 
 
-  searchSub = (text$: Observable<string>) =>
-    text$
-      .debounceTime(200)
-      .map(
-        term =>
-          term === ""
-            ? []
-            : this.subjectArray
-                .filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1)
-                .slice(0, 10)
-      );
+
 
   ngOnInit() {
     
-
-        this.data.getAllSubjects().subscribe(data=>{
-          this.subjectArray = data['subjects'].slice(0,data['subjects'].length);
-         
-    
-        })
-    
-      
-
     
     this.searchControl = new FormControl();
-    this.data.currentLat.subscribe(lat => (this.latitude = lat));
-    this.data.currentLng.subscribe(lng => (this.longtitude = lng));
-    if (isPlatformBrowser(this.platformID)) {
-      this.mapsApiLoader.load().then(() => {
-        let cp: google.maps.places.ComponentRestrictions;
-        cp = {
-          country: ["so"]
-        };
+   
+  }
+  getCity($event){
+    this.latitude = $event.lat;
+    this.longtitude = $event.lng;
+    this.city = $event.city;
+ 
 
-        let autocomplete = new google.maps.places.Autocomplete(
-          this.searchElementRef.nativeElement,
-          {
-            types: ["(regions)"],
-            strictBounds: true,
-            componentRestrictions: cp
-          }
-        );
-
-        autocomplete.addListener("place_changed", () => {
-          this.ngZone.run(() => {
-            let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-
-            if (place.geometry === null || place.geometry === undefined) {
-              return;
-            }
-            this.latitude = place.geometry.location.lat();
-            this.longtitude = place.geometry.location.lng();
-            this.countryname = place.formatted_address;
-          });
-        });
-      });
-    }
+  }
+  getSubject($event){
+    this.model = $event.name ||'';
   }
 
   onLocationSubmit() {
+
     this.data.changeLocation(
       this.latitude,
       this.longtitude,
-      this.countryname,
+      this.city,
       this.model
     );
-    if (this.latitude === 0 || this.longtitude === 0) {
+    if (this.latitude === undefined || this.longtitude === undefined || this.latitude===null ||this.longtitude===null){
       return;
     } else {
-      this.router.navigate(["/find-mentors"]);
+      this.router.navigate(["/find-mentors",{lng:this.longtitude,lat:this.latitude,subject:this.model||''}]);
     }
   }
   @HostListener("window:scroll", [])

@@ -16,6 +16,7 @@ export class DataService {
 	private subSource = new BehaviorSubject<any>("");
 	private tokenSource = new BehaviorSubject<boolean>(false);
 	private emailSrc = new BehaviorSubject<string>("");
+	private registeredSrc = new BehaviorSubject<boolean>(false);
 
 
 	private subjectArray = new BehaviorSubject<string[]>([]);
@@ -29,11 +30,13 @@ export class DataService {
 	currentToken = this.tokenSource.asObservable();
 	currentSubArray = this.subjectArray.asObservable();
 	currentEmail = this.emailSrc.asObservable();
+	isRegistered = this.registeredSrc.asObservable();
+
 	arr:any[];
   constructor(private http:HttpClient) { }
   private url = siteWide.constants.SERVER_URL;
 
-  inputSubjectValues(subjects:string[]){
+  inputSubjectValues(subjects:any[]){
 	  this.subjectArray.next(subjects);
   }
   changeEmail(email:string){
@@ -45,6 +48,9 @@ export class DataService {
 		  return res;
 	  })
 
+  }
+  changeReg(isReg:boolean){
+	  this.registeredSrc.next(isReg)
   }
  
 

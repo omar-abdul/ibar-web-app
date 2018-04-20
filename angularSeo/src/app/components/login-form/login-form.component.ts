@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,Output } from "@angular/core";
 import { AuthService } from "../../services/auth.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ValidateService } from "../../services/validate.service";
@@ -13,12 +13,13 @@ import { Observable } from "rxjs/Observable";
 export class LoginFormComponent implements OnInit {
   email: any;
   password: String;
-  returnUrl: String;
+  returnUrl: string;
   validated: boolean;
   authenticated: boolean;
   message: any;
   isLoading = false;
   currentUrl: any;
+  
 
   constructor(
     private validateService: ValidateService,
@@ -33,12 +34,14 @@ export class LoginFormComponent implements OnInit {
   ngOnInit() {
     this.currentUrl = this.router.url;
 
-    this.returnUrl = this.route.snapshot.queryParamMap["returnUrl"] || "/";
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl')||'/profile';
     if (this.authService.loggedIn()) {
+      
       this.router.navigate([this.returnUrl]);
     }
     this.validated = true;
     this.authenticated = true;
+   
   }
   onLoginSubmit() {
     const user = {
@@ -57,11 +60,11 @@ export class LoginFormComponent implements OnInit {
     } else {
       this.authService.authenticate(user).subscribe(data => {
         if (data["success"]) {
-          this.authService.storeUserData(data["token"], data["user"]);
-          if (this.currentUrl === "/login") {
+          this.authService.storeUserData(data["token"], data["user"],data['refresh_token']);
+
+          
             this.router.navigate([this.returnUrl]);
-          } else {
-          }
+          
         } else {
           this.authenticated = false;
           this.message="";

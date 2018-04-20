@@ -1,0 +1,48 @@
+<div class="card w-60">
+  <div class="card-header">
+
+    <tr>
+      <td>
+        <app-star [rating]='mentor?.rate' [itemId]="mentor?.id" [inputWidth]="80" 
+        [inputHeight]="20" [inputFontSize]="20" class="small-star"></app-star>
+      </td>
+    </tr>
+  </div>
+
+
+
+  <div class="card-body">
+    <div class= "row">
+      <div class="col-sm-2 ">
+          <div class="card-image">
+              <div *ngIf="!mentor?.imageurl" class="pic" width="120" height ="120" > 
+                  {{mentor?.initial}}
+                </div>
+              
+                <ng-container *ngIf="mentor?.imageurl">
+                  <img class="centered-cropped" [src]='mentor?.imageurl' width="120" height="120" style="border-radius: 50%">
+                </ng-container>
+          </div>
+      </div>
+      <div class="col-sm-6 vertical-line">
+          <div class="card-info ">
+              <h5 class="card-title">{{mentor?.name}}</h5>
+              <p class="card-text">{{mentor?.subjects}}</p>
+          
+              <p class="card-text">{{mentor?.about}} </p>
+          </div>
+      </div>
+      <div class="col-sm-4">
+          <button class="btn btn-primary" [ng-modal]="mentor" (ng-modalSubmit)="requestMentor($event)">Hire</button>
+          <a class="btn btn-primary" routerLink="/mentor/{{mentor?.id}}">View more</a>
+      </div>
+    </div>
+
+
+
+
+
+
+
+  </div>
+</div>

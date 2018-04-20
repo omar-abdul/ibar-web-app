@@ -59,7 +59,7 @@ export class StudentLoginComponent implements OnInit {
     } else {
       this.authService.authenticateStudent(user).subscribe(data => {
         if (data["success"]) {
-          this.authService.storeUserData(data["token"], data["user"]);
+          this.authService.storeUserData(data["token"], data["user"],data["refresh_token"]);
           if (this.currentUrl === "/login") {
             this.router.navigate([this.returnUrl]);
           } else {

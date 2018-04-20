@@ -1,5 +1,6 @@
 import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
 import {FormControl, FormGroup, Validators, FormBuilder} from '@angular/forms';
+import {Router, ActivatedRoute} from '@angular/router';
 
 import {validphoneNumber, passwordMatch} from '../validator';
 import {Student} from '../Student';
@@ -23,7 +24,7 @@ export class RegisterFormComponent implements OnInit {
   emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
   @ViewChild('city') searchElementRef: ElementRef;
 
-  constructor(private fb: FormBuilder,private authService:AuthService,private data:DataService) {this.createForm()}
+  constructor(private fb: FormBuilder,private authService:AuthService,private data:DataService,private router:Router) {this.createForm()}
 
   createForm() {
     this.registerForm = this.fb.group({
@@ -60,6 +61,8 @@ export class RegisterFormComponent implements OnInit {
       if(data['success']){
         this.registered = true;
         this.statusOk = true;
+        this.data.changeReg(true);
+        this.router.navigate(['confirmation/page'])
         this.data.changeEmail(this.student['email']);
       }
       else{

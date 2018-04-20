@@ -5,15 +5,18 @@ const {
   query
 } = require("express-validator/check");
 const { sanitizeBody } = require("express-validator/filter");
-var bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+const crypto = require('crypto');
+
 const passport = require("passport");
 const multer = require("multer");
+
+const jwt_helper = require("../../helper/jwt-helper");
 
 const User = require("./userModel");
 const util = require("../../helper/util");
 const mail = require("../../helper/mail");
+const crypto_hmac = require("../../helper/hmac_helper");
 const Token = require("../token/tokenModel");
 const Mentor = require("../mentor/mentorModel");
 
@@ -50,9 +53,9 @@ module.exports.registerHandler = [
 
   util.asynMiddleWare(async function(req, res, next) {
     const phone_number = await util.formatNumber(req.body.phoneNumber);
-    // const password = await hashPassword(req.body.password);
+    // const password = await hashPassword(req.body.password)
     const errors = validationResult(req);
-    console.log(req.body)
+    //(req.body);
     const email = await util.emailToLowerCase(req.body.email);
     const name = await jsUcfirst(req.body.name);
 
@@ -76,47 +79,43 @@ module.exports.registerHandler = [
           email: email,
           password: req.body.password.pass,
           phoneNumber: phone_number,
-          role: req.body.role,
-
+          role: req.body.role
         };
-       
-        
-      
-      const addedUser = await User.addUser(user);
-      if(user.role ==='mentors'){
-        const mentor = {
-          id:addedUser.id,
-          subject_id:req.body.subject_id,
-          city_name:req.body.city_name,
-          location:{
-            lng:req.body.location.longtitude,
-            lat:req.body.location.latitude
-          }
+
+        const addedUser = await User.addUser(user);
+        if (user.role === "mentors") {
+          const mentor = {
+            id: addedUser.id,
+            subject_id: req.body.subject_id,
+            city_name: req.body.city_name,
+            location: {
+              lng: req.body.location.longtitude,
+              lat: req.body.location.latitude
+            }
+          };
+
+          const addedMentor = await Mentor.addMentor(mentor);
+          const addedSubject = await Mentor.addTeachSubject(mentor);
         }
 
-        const addedMentor = await Mentor.addMentor(mentor);
-        const addedSubject = await Mentor.addTeachSubject(mentor);
+        const token = {
+          user_id: addedUser.id,
+          token: crypto.randomBytes(16).toString("hex")
+        };
+        const addToken = await Token.addToken(token.user_id, token.token);
 
+        mail
+          .sendConfirmationEmail(token.token, email, req.headers.host)
+          .then(info => {
+            res.json({
+              success: true,
+              msg:
+                "A confirmation email has been sent to your email address, please verify your account"
+            });
+          })
+          .catch(next);
       }
-
-
-      const token = {
-        user_id: addedUser.id,
-        token: crypto.randomBytes(16).toString("hex")
-      };
-      const addToken = await  Token.addToken(token.user_id, token.token);
-  
-      mail
-        .sendConfirmationEmail(token.token, email, req.headers.host)
-        .then(info => {
-          res.json({
-            success: true,
-            msg:
-              "A confirmation email has been sent to your email address, please verify your account"
-          });
-        }).catch(next);
     }
-  }
   })
 ];
 module.exports.loginHandler = [
@@ -138,13 +137,12 @@ module.exports.loginHandler = [
       if (user) {
         isMatch = await User.comparePassword(req.body.password, user.password);
         if (isMatch) {
-          if(!user.is_verified){
+          if (!user.is_verified) {
             res.json({
-              success:false,
-              msg:"Please verify your account to login"
-            })
-          }
-          else{
+              success: false,
+              msg: "Please verify your account to login"
+            });
+          } else {
             const loggedUser = {
               id: user.id,
               name: user.name,
@@ -152,23 +150,20 @@ module.exports.loginHandler = [
               role: user.role,
               phone_number: user.phone_number
             };
-            const token = jwt.sign(
-              {
-                data: loggedUser
-              },
-              process.env.DB_SECRET,
-              {
-                expiresIn: 6040800
-              }
-            );
-            res.json({
+						const token = jwt_helper.signToken(loggedUser);
+						const refreshToken = await crypto_hmac.createCrytoHmac(user.email)
+
+
+						const rowCount = await User.addRefreshToken(refreshToken, user.id);
+						
+
+            return res.json({
               success: true,
               token: "JWT " + token,
-              user: loggedUser
+              user: loggedUser,
+              refresh_token: refreshToken
             });
-
           }
-
         } else if (!isMatch) {
           res.json({
             success: false,
@@ -236,25 +231,22 @@ module.exports.updateUserHandler = [
         });
       } else {
         id = await User.updateUser(req.user.id, req.body);
-      
 
-      if (id) {
-        if (req.user.role === "mentors") {
-          const mentor = await Mentor.updateMentor(id, req.body, subjects);
+        if (id) {
+          if (req.user.role === "mentors") {
+            const mentor = await Mentor.updateMentor(id, req.body, subjects);
           }
           res.json({
             success: true,
             msg: "information updated successfully"
           });
-      }else{
-        res.json({
-          success:false,
-          msg:"Something went wrong"
-        });
+        } else {
+          res.json({
+            success: false,
+            msg: "Something went wrong"
+          });
+        }
       }
-    }
-
-      
     }
   })
 ];
@@ -282,7 +274,6 @@ module.exports.addJobHandler = [
         .then(result => res.json({ success: true, msg: "Mentor hired" }))
         .catch(err => {
           next(err);
-
         });
     } else {
       res.json({
@@ -319,30 +310,17 @@ module.exports.uploadImageHandler = [
     session: false
   }),
   upload.single("image"),
-  util.asynMiddleWare(
-    async function(req, res, next) {
-      const result = await util.uploadImage(req.file, req.user.id);
-      const url = await User.updateImageUrl(req.user.id,result.secure_url);
+  util.asynMiddleWare(async function(req, res, next) {
+    const result = await util.uploadImage(req.file, req.user.id);
+    const url = await User.updateImageUrl(req.user.id, result.secure_url);
 
-        
-
-      
-      if(url!==undefined){
-        res.json({
-          success:true,
-          url:result.secure_url
-        });
-      }
-
-
-
-
-
-
+    if (url !== undefined) {
+      res.json({
+        success: true,
+        url: result.secure_url
+      });
     }
-  )
-
-
+  })
 ];
 
 module.exports.profileHandler = [
@@ -350,13 +328,11 @@ module.exports.profileHandler = [
     session: false
   }),
   util.asynMiddleWare(async function(req, res, next) {
-   
+    //(req.cookies);
+
     role = req.user.role;
     if (role === "mentors") {
-
       const mentor = await Mentor.getMentorById(req.user.id);
-     
-
 
       res.json({
         success: true,
@@ -393,19 +369,21 @@ module.exports.passwordResetHandler = [
           user_id: result.id,
           token: crypto.randomBytes(8).toString("hex")
         };
-        const addToken =await Token.addPasswordToken(em, token.token);
-        
+        const addToken = await Token.addPasswordToken(em, token.token);
 
         if (addToken.rowCount > 0) {
-          mail.sendResetPassEmail(token.token, em, req.headers.host).then(info => {
-            if (info) {
-              res.json({
-                success: true,
-                msg: "An email was sent to you",
-                token:token.token
-              });
-            }
-          }).catch(next);
+          mail
+            .sendResetPassEmail(token.token, em, req.headers.host)
+            .then(info => {
+              if (info) {
+                res.json({
+                  success: true,
+                  msg: "An email was sent to you",
+                  token: token.token
+                });
+              }
+            })
+            .catch(next);
         }
       } else {
         res.json({
@@ -418,24 +396,17 @@ module.exports.passwordResetHandler = [
 ];
 module.exports.passConfirmationHandler = [
   util.asynMiddleWare(async function(req, res, next) {
-   
     const results = await Token.getPassToken(req.body.token);
     if (results) {
-      
       const user = results;
-      const token = jwt.sign(
-        {
-          data: user
-        },
-        process.env.DB_SECRET,
-        {
-          expiresIn: 6040800
-        }
-      );
+			const token = jwt_helper.signToken(loggedUser);
+			const refreshToken = await crypto_hmac.createCrytoHmac(user.email)
+
       res.json({
         success: true,
         token: "JWT " + token,
-        user: user
+				user: user,
+				refresh_token:refreshToken
       });
     } else {
       res.json({
@@ -457,20 +428,17 @@ module.exports.updatePasswordHandler = [
   util.asynMiddleWare(async function(req, res, next) {
     let password = await hashPassword(req.body.password);
     const result = await User.updatePassword(req.user.email, password);
-    if(result.rowCount > 0){
+    if (result.rowCount > 0) {
       res.json({
         success: true,
         msg: "password updated"
       });
-    }
-    else{
+    } else {
       res.json({
         success: false,
         msg: "password updated"
       });
     }
-
-
   })
 ];
 
@@ -501,25 +469,31 @@ module.exports.studentLoginHandler = [
         isMatch = await User.comparePassword(req.body.password, data.password);
 
         if (isMatch) {
-          if(!user.is_verified){
+          if (!user.is_verified) {
             res.json({
-              success:false,
-              msg:"Please verify your account to continue"
-            })
-          }else{
-            const token = jwt.sign(
-              {
-                data: user
-              },
-              process.env.DB_SECRET,
-              {
-                expiresIn: 6040800
-              }
-            );
-            res.json({ success: true, token: "JWT " + token, user: user });
+              success: false,
+              msg: "Please verify your account to continue"
+            });
+          } else {
+            const loggedUser = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              phone_number: user.phone_number
+            };
+            const token = jwt_helper.signToken(loggedUser);
 
+						const refreshToken = await crypto_hmac.createCrytoHmac(user.email)
+            const rowCount = await User.addRefreshToken(refreshToken, user.id);
+
+            res.json({
+              success: true,
+              token: "JWT " + token,
+              user: user,
+              refresh_token: refreshToken
+            });
           }
-
         } else if (!isMatch) {
           res.json({
             success: false,
@@ -536,14 +510,107 @@ module.exports.studentLoginHandler = [
   })
 ];
 
-module.exports.subjectHandler = [util.asynMiddleWare(async function(req,res,next){
-  const subjects = await User.getSubjects();
-  
-  res.json({
-    success:true,
-    subjects:subjects
-  })
+module.exports.subjectHandler = [
+  util.asynMiddleWare(async function(req, res, next) {
+    const subjects = await User.getSubjects();
 
-}
-)
+    res.json({
+      success: true,
+      subjects: subjects
+    });
+  })
 ];
+
+module.exports.reauthenticateMiddleware = async function(req, res, next) {
+
+  passport.authenticate("jwt", { session: false }, async function(
+    err,
+    userLogged,
+    info
+  ) {
+    if (err) {
+      return next(err);
+    }
+    if (!userLogged) {
+      const email = req.body.email;
+
+			
+      const ref_token = req.header('X-Refresh-Token');
+      
+			const user = await User.getByRefreshToken(ref_token);
+
+
+      if (user === null || user === undefined || user === "") {
+        return res.status(401).json({
+          success: false
+        });
+      }
+
+      const diff = Date.daysBetween(new Date(Date.now()), user.date_issued);
+
+      if (diff > 180) {
+        return res.status(401).json({ success: false });
+      }
+      const loggedUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone_number: user.phone_number
+			};
+			req.user = user;
+			
+
+      const token = jwt_helper.signToken(loggedUser);
+      return res.json({
+        success: true,
+        token: "JWT " + token,
+				user: userLogged,
+				refresh_token:ref_token
+
+      });
+		}
+
+	
+		
+		const ref_token = req.header('X-Refresh-Token');
+
+
+    req.user = userLogged;
+		const token = jwt_helper.signToken(userLogged);
+		const refreshToken = await crypto_hmac.createCrytoHmac(userLogged.email)
+    return res.json({
+      success: true,
+      token: "JWT " + token,
+			user: userLogged,
+			refresh_token:ref_token
+		 });
+  })(req, res, next);
+};
+
+module.exports.logOutHandler =[
+  passport.authenticate("jwt",{session:false}),
+ async function(req,res,next){
+ const ref_token = req.header('X-Refresh-Token');
+ const del = await User.deleteRefreshTk(req.user.id);
+ if(del.rowCount > 0 ){
+   res.json({
+     success:true
+   })
+ }
+}]
+
+Date.daysBetween = function(date1, date2) {
+  //Get 1 day in milliseconds
+  var one_day = 1000 * 60 * 60 * 24;
+
+  // Convert both dates to milliseconds
+  var date1_ms = date1.getTime();
+  var date2_ms = date2.getTime();
+
+  // Calculate the difference in milliseconds
+  var difference_ms = date2_ms - date1_ms;
+
+  // Convert back to days and return
+  return Math.round(difference_ms / one_day);
+};

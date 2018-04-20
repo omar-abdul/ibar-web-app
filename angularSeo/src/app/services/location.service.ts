@@ -17,7 +17,7 @@ export class LocationService {
 
    
     let params=new HttpParams().set('lng',lng).set('lat',lat);
-    if(subject){
+    if(subject.name){
       params=params.append('subject',subject.name)
     }
 

@@ -22,7 +22,7 @@ module.exports.sendConfirmationEmail=async function(token,email,host,response){
     const transporter = nodemailer.createTransport(mg(auth));
   
     const mailOptions = {
-      from: "no-reply@ibar.com",
+      from: "no-reply@ibar.so",
       to: email,
       subject: "Verify your account",
       text:
@@ -51,7 +51,7 @@ module.exports.sendConfirmationEmail=async function(token,email,host,response){
     const transporter = nodemailer.createTransport(mg(auth));
   
     const mailOptions = {
-      from: "no-reply@ibar.com",
+      from: "no-reply@ibar.so",
       to: email,
       subject: "Verify your account",
       text:

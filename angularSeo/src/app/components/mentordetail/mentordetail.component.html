@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="detail">
+  <!-- <div class="detail">
     <div class="row">
       <div *ngIf="isLoading">
         <img class="middle-rolling" src="/assets/images/Rolling.gif">
@@ -96,7 +96,42 @@
       
 
     </div>
-  </div>
+  </div> -->
+  <div class="row">
+      <div class="col-sm-3">
+          <profile-card [user]='mentor' [isProfile]='false' [isMentor]='true'></profile-card>
+
+      </div>
+      <div class="col-sm-6" >
+        
+          <div class="card text-center">
+              <div class="card-header">
+                About Me
+              </div>
+              <div class="card-body">
+                <p class="card-text">{{mentor?.about}}</p>
+              </div>
+            </div>
+            <div class="card text-center" style="margin-top:10px">
+              <div class="card-header">
+                Where I live
+              </div>
+              <div class="card-body">
+          
+                <p class="card-text">{{mentor?.city_name}}</p>
+              </div>
+            </div>
+        
+      </div>
+      <div class="col-sm-3">
+        <ng-container *ngFor='let subject of mentor?.subjects'>
+            <subject-card [subject]='subject'></subject-card>
+        </ng-container>
+        
+      </div>
+      </div>
+  
+  
   <div>
     <app-comments [mentorID]='mentorID'></app-comments>
 

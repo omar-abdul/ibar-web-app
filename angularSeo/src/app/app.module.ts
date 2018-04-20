@@ -5,12 +5,8 @@ import {RouterModule,Routes} from '@angular/router';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
+import {ErrorHandler} from "@angular/core";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-
-// import { CookieService } from 'ngx-cookie-service';
-// import {NgAutoCompleteModule} from "ng-auto-complete";
-// import { FileUploadModule } from 'ng2-file-upload';
-
 
 
 import { AppComponent } from './app.component';
@@ -61,6 +57,17 @@ import { RateComponent } from './components/rate/rate.component';
 import { ResendTokenComponent } from './components/resend-token/resend-token.component';
 import { MentorRegisterFormComponent } from './components/mentor-register-form/mentor-register-form.component';
 
+import {ErrorsHandler} from "./error-handler";
+import { CitySearchComponent } from './components/city-search/city-search.component';
+import { SubjectSearchComponent } from './components/subject-search/subject-search.component';
+import { MentorCardComponent } from './components/mentor-card/mentor-card.component';
+import { CofirmGuard } from './guard/cofirm.guard';
+import { ProfileCardComponent } from './components/profile-card/profile-card.component';
+import { ProfileInfoComponent } from './components/profile-info/profile-info.component';
+import { JobHistoryComponent } from './components/job-history/job-history.component';
+
+import { SubjectCardComponent } from './components/subject-card/subject-card.component'
+
 enableProdMode();
 
 
@@ -78,8 +85,9 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
 {path:'forgot-password',component:ForgotPasswordComponent},
 {path:'change-password',component:ChangePasswordComponent,canActivate:[AuthGuard]},
 {path:'verify-token',component:VerifiyTokenComponent, canActivate:[PasswordGuard]},
+{path:'confirmation/page',component:ResendTokenComponent,canActivate:[CofirmGuard]},
 
-{path:'**', redirectTo:''}
+{path:'**', redirectTo:'error-page'}
 
 ]
 
@@ -114,7 +122,15 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
     CommentsComponent,
     RateComponent,
     ResendTokenComponent,
-    MentorRegisterFormComponent  
+    MentorRegisterFormComponent,
+    CitySearchComponent,
+    SubjectSearchComponent,
+    MentorCardComponent,
+    ProfileCardComponent,
+    ProfileInfoComponent,
+    JobHistoryComponent,
+    
+    SubjectCardComponent  
    
   ],
   imports: [
@@ -135,13 +151,17 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
         BrowserTransferStateModule
   ],
   providers: [ValidateService,AuthGuard,MentorGuard, LoadingService,
+    {
+      provide:ErrorHandler,
+      useClass:ErrorsHandler
+    },
     StudentGuard,AuthService,DataService,LocationService, MentorService, PasswordGuard,
     LoadingService,{
       provide:HTTP_INTERCEPTORS,
     useFactory:(service:LoadingService)=>new LoadingInterceptor(service),
     multi:true,
     deps:[LoadingService],
-    },CommentService],
+    },CommentService, CofirmGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

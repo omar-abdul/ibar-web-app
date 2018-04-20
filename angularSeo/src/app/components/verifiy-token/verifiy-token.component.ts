@@ -35,7 +35,7 @@ export class VerifiyTokenComponent implements OnInit {
     };
     this.authService.confirmToken(user).subscribe(data => {
       if (data["success"]) {
-        this.authService.storeUserData(data["token"], data["user"]);
+        this.authService.storeUserData(data["token"], data["user"],data["refresh_token"]);
         this.router.navigate(["/change-password"]);
       } else {
         this.verified = false;

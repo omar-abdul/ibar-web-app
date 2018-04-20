@@ -42,6 +42,7 @@ module.exports.getCommentHandler =util.asynMiddleWare(
     }),
   util.asynMiddleWare(
     async function(req, res, next) {
+      console.log(req.body);
         const rate = {
           student: req.user.id,
           mentor: req.body.mentor,

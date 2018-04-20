@@ -1,0 +1,61 @@
+<ng-container *ngIf='isHistory; else nothing'>
+  <div *ngIf="isMentor; then mentor ; else student"></div>
+
+
+   
+  
+    <ng-template #mentor>
+      <div class="card border-dark mb-3" style="max-width: 60rem;">
+      <div class="card-body text-dark">
+        <div  class="card-header">Job History</div>
+        <ng-container *ngFor='let job of jobs'>
+            <div class="card-body text-dark">
+                <h5 class="card-title">{{job?.student_name}}</h5>
+              </div>
+
+        </ng-container>
+      </div>
+      </div>
+    </ng-template>
+    <ng-template #student>
+        <div class="card border-dark mb-3" style="max-width: 60rem;">
+      <div class="card-header">Mentor History</div>
+      <ng-container *ngFor='let job of jobs'>
+          <div class="card-body text-dark">
+            <div class="row">
+              <div class="col-sm-9">
+                  <h5  class="card-title">{{job?.mentor_name}}</h5>
+      
+                  <p  class="card-text">{{job?.mentor_phone_number}}</p>
+              </div>
+              <div class="col-sm-3">
+                <a class="btn btn-primary" routerLink='/mentor/{{job?.mentor_id}}'>View Mentor</a>
+              </div>
+            </div>
+
+            </div>
+            <hr/>
+
+      </ng-container>
+
+
+      </div>
+    </ng-template>  
+</ng-container>
+
+
+
+
+
+<ng-template #nothing>
+  <div class="card border-dark mb-3" style="max-width: 60rem;">
+    <div *ngIf='isMentor' class="card-header">Job History</div>
+    <div *ngIf='!isMentor' class="card-header">Mentor History</div>
+    <div class="card-body text-dark">
+
+      <p class="card-text">Nothing to show yet</p>
+    </div>
+  </div>
+
+
+</ng-template>

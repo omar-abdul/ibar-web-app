@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild, ElementRef } from '@angular/core';
 import {FormControl, FormGroup, Validators, FormBuilder} from '@angular/forms';
+import {Router} from "@angular/router"
 import {} from 'googlemaps';
 import { MapsAPILoader } from '@agm/core';
 import {validphoneNumber, passwordMatch} from '../validator';
@@ -29,7 +30,7 @@ export class MentorRegisterFormComponent implements OnInit {
   constructor(private fb: FormBuilder,private authService:AuthService,
     private data:DataService,
     private mapsApiLoader: MapsAPILoader,
-  private ngZone: NgZone) {this.createForm()}
+  private ngZone: NgZone,private router:Router) {this.createForm()}
 
   createForm() {
     this.registerForm = this.fb.group({
@@ -40,7 +41,7 @@ export class MentorRegisterFormComponent implements OnInit {
         pass:['',[Validators.required, Validators.minLength(8)]],
         confirmPass:['' , Validators.required]
       },{validator: passwordMatch}),
-      city_name: ['', Validators.required],
+ 
       subject: ['', Validators.required],
       role:'mentors'
 
@@ -53,46 +54,25 @@ export class MentorRegisterFormComponent implements OnInit {
   get name(){return this.registerForm.get('name')};
   get email() {return this.registerForm.get('email')}
   get password() { return this.registerForm.get('password'); }
-  get city_name() {return this.registerForm.get('city_name'); }
   get phoneNumber () {return this.registerForm.get('phoneNumber') ;}
   get subject() {return this.registerForm.get('subject'); }
 
   ngOnInit() {
-    this.data.getAllSubjects().subscribe(data=>{
-      this.subArr = data['subjects'].slice(0,data['subjects'].length);
+    this.data.currentSubArray.subscribe(data=>{
+      if(!data){return;}
+      this.subArr = data.slice(0,data.length);
     });
+    if(!Array.isArray(this.subArr) || !this.subArr.length){
+      this.data.getAllSubjects().subscribe(data => {
+        this.subArr = data["subjects"].slice(0, data["subjects"].length);
+        this.data.inputSubjectValues(this.subArr);
+      });
+    }
 
 
-    this.mapsApiLoader.load().then(() => {
-      let cp: google.maps.places.ComponentRestrictions;
-      cp = {
-        country: [ 'so' ]
-      };
 
-    const autocomplete = new google.maps.places.Autocomplete(
-          this.searchElementRef.nativeElement,
-          {
-            types: ['(regions)'],
-            strictBounds: true,
-            componentRestrictions: cp
-          }
-        );
-
-        autocomplete.addListener('place_changed', () => {
-          this.ngZone.run(() => {
-            const place: google.maps.places.PlaceResult = autocomplete.getPlace();
-            if (place.geometry === null || place.geometry === undefined) {
-              return;
-            }
-            this.latitude = place.geometry.location.lat();
-            this.longtitude = place.geometry.location.lng();
-            this.countryName = place.formatted_address;
-            this.city_name.patchValue(this.countryName);
-
-          });
-        });
-    });
   }
+
 
   onRegisterSubmit() {
     this.mentor = this.registerForm.value;
@@ -110,14 +90,14 @@ export class MentorRegisterFormComponent implements OnInit {
       email:this.mentor.email
     }
     if(this.latitude ===0 || this.longtitude===0 ||this.latitude===undefined ||
-      this.longtitude === undefined || this.countryName===''||this.countryName===undefined ||
-      this.countryName!==this.city_name.value){
+      this.longtitude === undefined || this.countryName===''||this.countryName===undefined){
         
       this.message="Please enter a valid city";
       this.statusOk = false;
       this.registered = false;
       return ;
     }
+
  
    
 
@@ -128,6 +108,8 @@ export class MentorRegisterFormComponent implements OnInit {
       if(data['success']){
         this.registered = true;
         this.statusOk = true;
+        this.data.changeReg(true);
+        this.router.navigate(['confirmation/page']);
         this.data.changeEmail(this.mentor['email']);
       }
       else{
@@ -144,6 +126,13 @@ export class MentorRegisterFormComponent implements OnInit {
     })
 
 
+  }
+
+  getCity($event){
+    this.latitude = $event.lat;
+    this.longtitude = $event.lng;
+    this.mentor.city_name = $event.city
+    this.countryName = $event.city
   }
 
 }

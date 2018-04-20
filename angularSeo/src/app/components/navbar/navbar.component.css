@@ -6,3 +6,7 @@
 img {
 	width: 100%;
 }
+.btn-link{
+	padding:6px;
+	cursor:pointer;
+}

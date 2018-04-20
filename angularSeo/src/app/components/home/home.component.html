@@ -2,21 +2,16 @@
   <div class="header-text fadeIn ">
     <h2> #1 choice for finding  teachers </h2>
   </div>
-  <ng-template #rt let-r="result" let-t="term">
-    {{ r.name}}
-  </ng-template>
+
   <div class="row">
     <div class="card card-body bg-dark">
-      <form [formGroup]="searchForm" (submit)="onLocationSubmit()" class="form-inline">
-        <div class="input-group">
-          <input type="text" class="form-control" size="50" placeholder="Enter a city" autocorrect="off" autocapitalize="off" spellcheck="off"
-            #search formControlName="city" />
-          <br>
+      <form (ngSubmit)="onLocationSubmit()" class="form-inline">
+        <div class="form-group">
+            <city-search (cityEvent)="getCity($event)"></city-search>
+
         </div>
-        <div class="input-group">
-          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="searchSub" [resultTemplate]="rt" 
-          [inputFormatter]="formatter" placeholder="Enter subject name"
-            formControlName="subject" />
+        <div class="form-group">
+         <subject-search (subjectEvent)='getSubject($event)'></subject-search>
 
 
         </div>
@@ -46,7 +41,7 @@
 
     </div>
     <div class="col-sm-4">
-      <img src="/assets/images/smart-owl.svg" width="300" height="300" style="object-fit: cover;">
+      <img [src]="'https://res.cloudinary.com/mentome/image/upload/v1524177434/smart-owl.svg'" alt="smart owl" width="300" height="300" style="object-fit: cover;">
     </div>
   </div>
 </div>
@@ -85,7 +80,7 @@
 
   <div class="row ">
     <div class="col-sm-4">
-      <img src="/assets/images/typing.jpg" width="300" height="300" style="object-fit: cover;">
+      <img [src]="'https://res.cloudinary.com/mentome/image/upload/v1524177472/typing.jpg'" alt="typing" width="300" height="300" style="object-fit: cover;">
       <br/>
       <a class="small-font" href="https://www.freepik.com/free-photos-vectors/technology">Technology vector created by Freepik</a>
     </div>
@@ -112,7 +107,7 @@
 
 
     <div class="col-sm-4">
-      <img src="/assets/images/mobile-money.jpg" width="300" height="300" style="object-fit: cover;">
+      <img [src]="'https://res.cloudinary.com/mentome/image/upload/v1524177457/mobile-money.jpg'"  alt="mobile-money" width="300" height="300" style="object-fit: cover;">
       <br/>
       <a class="small-font" href='https://www.freepik.com/free-vector/payment-transfer-on-mobile-phones_1189648.htm'>Designed by Freepik</a>
     </div>

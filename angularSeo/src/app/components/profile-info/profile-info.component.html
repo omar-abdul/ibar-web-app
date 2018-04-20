@@ -1,0 +1,58 @@
+<ng-container *ngIf='authService.isMentor(); else student'>
+  <div class="card text-center">
+    <div class="card-header">
+      About Me
+    </div>
+    <div class="card-body">
+      <p class="card-text">{{user?.about}}</p>
+    </div>
+  </div>
+  <div class="card text-center" style="margin-top:10px">
+    <div class="card-header">
+      Where I live
+    </div>
+    <div class="card-body">
+
+      <p class="card-text">{{user?.city_name}}</p>
+    </div>
+  </div>
+  <div class="card text-center" style="margin-top:10px">
+      <div class="card-header">
+        My email
+      </div>
+      <div class="card-body">
+  
+        <p class="card-text">{{user?.email}}</p>
+      </div>
+    </div>
+    <div class="card text-center" style="margin-top:10px">
+        <div class="card-header">
+          My number
+        </div>
+        <div class="card-body">
+    
+          <p class="card-text">{{user?.phone_number}}</p>
+        </div>
+      </div>
+</ng-container>
+
+<ng-template #student>
+    <div class="card text-center" style="margin-top:10px">
+        <div class="card-header">
+          My number 
+        </div>
+        <div class="card-body">
+    
+          <p class="card-text">{{user?.phone_number}}</p>
+        </div>
+      </div>
+      <div class="card text-center" style="margin-top:10px">
+          <div class="card-header">
+            My email
+          </div>
+          <div class="card-body">
+      
+            <p class="card-text">{{user?.email}}</p>
+          </div>
+        </div>
+</ng-template>
