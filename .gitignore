@@ -1,5 +1,4 @@
-/angularSeo/node_modules
-
-/ibar/node_modules
-/ibar/git
-ibarSpace.code-workspace
+**/node_modules
+ibar/uploads
+ibar/coverage
+ibar/.git
