@@ -21,6 +21,7 @@ export class ServiceComponent implements OnInit {
     "Economics",
     "Computer Science",
     "Sociology"
+    
   ];
 
   constructor(private authService: AuthService) {}

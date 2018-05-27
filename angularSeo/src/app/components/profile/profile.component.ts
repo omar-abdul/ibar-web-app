@@ -8,7 +8,7 @@ import {
 import { AuthService } from "../../services/auth.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Router, ActivatedRoute } from "@angular/router";
-import "rxjs/add/operator/map";
+import {map} from "rxjs/operators"
 import { LoadingService } from "../../services/loading.service";
 @Component({
   selector: "app-profile",
@@ -42,7 +42,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getUserProfile() {
-    return this.authService.getProfile().map(async data => {
+    return this.authService.getProfile().pipe(map(async data => {
       if(data['user']){
 
         this.user = data["user"];
@@ -62,19 +62,20 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['/login']);
       }
 
-    });
+    }));
   }
 
   getMentorProfile(){
     this.authService.loadToken();
   
-    return this.authService.getMentorDetail(this.authService.user.id).map(async data => {
+    return this.authService.getMentorDetail(this.authService.user.id)
+    .pipe(map(async data => {
       if(data['user']){
 
         this.user.subjects = data["user"].subjects
       }
 
-    });
+    }));
 
   }
 

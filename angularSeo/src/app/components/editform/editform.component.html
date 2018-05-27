@@ -1,0 +1,158 @@
+<div *ngIf='success' class="alert alert-success">
+  Information updated successfully
+</div>
+
+<div *ngIf='!success && failed' class="alert alert-danger">
+  {{message}}
+</div>
+<ng-container *ngIf='authService.isMentor(); then mentor; else student'>
+</ng-container>
+<ng-template #mentor>
+  <form [formGroup]='editform' (ngSubmit)='updateUser(editform.value)'>
+    <div class="form-group row">
+      <label for="nameInput" class="col-sm-2 col-form-label">
+
+        Name :
+      </label>
+      <div class="col-sm-10">
+        <ng-container *ngIf='name.invalid && (name.dirty || name.touched)'>
+          <small *ngIf='name.errors?.minlength' class=" text-small text-danger">
+            *Name should be at least 4 characters long
+          </small>
+        </ng-container>
+        <input [ngClass]="{'is-invalid': name.invalid && (name.dirty || name.touched)}" formControlName='name' id="nameInput" class="form-control">
+
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label for="phone-num" class="col-sm-2 col-form-label">
+        Phone Number :
+      </label>
+      <div class="col-sm-10">
+
+        <ng-container *ngIf='phone_num.invalid && (phone_num.dirty || phone_num.touched)'>
+          <small *ngIf='phone.errors?.validNumber' class=" text-small text-danger">
+            *Phone Number must be of a valid number in the Somali region
+          </small>
+        </ng-container>
+
+        <input [ngClass]="{'is-invalid': phone_num.invalid && (phone_num.dirty || phone_num.touched)}" formControlName='phone_num'
+          id="phone-num" class="form-control">
+      </div>
+
+    </div>
+
+    <div class="form-group row">
+      <label for="about" class="col-sm-2 col-form-label">
+        About yourself :
+      </label>
+      <div class="col-sm-10">
+        <textarea formControlName='about' id='about' class="form-control"></textarea>
+
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="city" class="col-sm-2 col-form-label">
+        City you live in :
+      </label>
+      <div class="col-sm-10">
+        <city-search id="city" [city]="user?.city_name" (cityEvent)='getCity($event)'></city-search>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="subjectInput" class="col-sm-2 col-form-label">
+        Subjects you can teach :
+
+      </label>
+      <div class="col-sm-10">
+
+        <subject-search (subjectEvent)='getSubject($event)'></subject-search>
+
+        <div *ngFor="let sub of user?.subjects" class="profile-subject">
+          {{sub}}
+          <span class="close" (click)="deleteSubject(sub)">&times;</span>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class='row'>
+      <div class="col-sm-2">
+
+      </div>
+      <div class="col-sm-10">
+        <input type="submit" value="Update" class="btn btn-primary" [disabled]='!editform.valid'>
+        <a routerLink="/profile" class="btn btn-danger">Cancel</a>
+      </div>
+    </div>
+
+
+
+  </form>
+
+</ng-template>
+
+
+<!--Student template-->
+<ng-template #student>
+  <form [formGroup]='editform' (ngSubmit)='updateUser(editform.value)'>
+    <div class="form-group row">
+      <label for="nameInput" class="col-sm-2 col-form-label">
+
+        Name :
+      </label>
+      <div class="col-sm-10">
+        <ng-container *ngIf='name.invalid && (name.dirty || name.touched)'>
+          <small *ngIf='name.errors?.minlength' class=" text-small text-danger">
+            *Name should be at least 4 characters long
+          </small>
+        </ng-container>
+        <input [ngClass]="{'is-invalid': name.invalid && (name.dirty || name.touched)}" formControlName='name' id="nameInput" class="form-control">
+
+      </div>
+    </div>
+
+
+
+    <div class="form-group row">
+      <label for="phone-num" class="col-sm-2 col-form-label">
+        Phone Number :
+      </label>
+      <div class="col-sm-10">
+
+        <ng-container *ngIf='phone_num.invalid && (phone_num.dirty || phone_num.touched)'>
+          <small *ngIf='phone_num.errors?.validNumber' class=" text-small text-danger">
+            *Phone Number must be of a valid number in the Somali region
+          </small>
+        </ng-container>
+
+        <input [ngClass]="{'is-invalid': phone_num.invalid && (phone_num.dirty || phone_num.touched)}" formControlName='phone_num'
+          id="phone-num" class="form-control">
+      </div>
+
+    </div>
+
+
+
+    <div class='row'>
+      <div class="col-sm-2">
+
+      </div>
+      <div class="col-sm-10">
+        <input type="submit" value="Update" class="btn btn-primary" [disabled]='!editform.valid'>
+        <a routerLink="/profile" class="btn btn-danger">Cancel</a>
+      </div>
+    </div>
+
+
+
+
+
+  </form>
+
+</ng-template>
+

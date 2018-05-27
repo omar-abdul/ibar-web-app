@@ -25,9 +25,7 @@
 
     </form>
   </div>
-  <div *ngIf="isLoading" class="text-center" style="z-index: 9999">
-    <img class="middle-rolling" src="/assets/images/Rolling.gif">
-  </div>
+ 
 
   <div>
     <mentor-card *ngFor="let mentor of mentors" [mentor]='mentor'></mentor-card>

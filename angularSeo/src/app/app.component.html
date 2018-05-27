@@ -1,11 +1,19 @@
 
 <div id="container-fluid">
  <app-navbar></app-navbar>
- <div id="body">
+ <div id="body" [ngClass]="{'loading': isLoading}">
 
- <router-outlet></router-outlet>
 
- </div>
+ <router-outlet>
+		<div *ngIf='isLoading' >
+				<div class="lds-dual-ring preloader">
+					</div>
+	   
+			 </div>
+ </router-outlet>
+
+</div>
+
 
  <div id="footer">
 	<app-footer></app-footer>

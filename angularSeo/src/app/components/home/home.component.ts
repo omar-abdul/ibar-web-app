@@ -7,10 +7,9 @@ import {
   NgZone,
   ViewChild
 } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+
 import { map } from "rxjs/operators";
-import "rxjs/add/operator/debounceTime";
-import "rxjs/add/operator/distinctUntilChanged";
+
 
 import { FormControl, FormBuilder } from "@angular/forms";
 import {} from "googlemaps";

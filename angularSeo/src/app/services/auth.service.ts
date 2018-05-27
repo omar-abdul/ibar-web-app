@@ -1,7 +1,6 @@
 import { Injectable, PLATFORM_ID, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable , EMPTY} from "rxjs";
 import { isPlatformBrowser } from "@angular/common";
-import {EmptyObservable} from 'rxjs/observable/EmptyObservable';
 import * as siteWide from "../constants";
 
 // import {RequestOptions,Response,} from '@angular/http';
@@ -34,26 +33,26 @@ export class AuthService {
 
 		return this.http
 			.post(this.url + "/api/register", user, { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	authenticate(user) {
 		let header = new HttpHeaders().set("Content-Type", "application/json");
 		return this.http
 			.post(this.url + "/api/authenticate", user, { headers: header})
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	authenticateStudent(user) {
 		let header = new HttpHeaders().set("Content-type", "application/json");
 		return this.http
 			.post(this.url + "/api/authenticate-student", user, { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	addComment(comment){
 		
@@ -62,9 +61,10 @@ export class AuthService {
 			Authorization: this.authToken,
 			"Content-Type": "application/json"
 		});
-		return this.http.post(this.url+"/api/add-comment",comment,{headers:header}).map(res=>{
-			return res
-		})
+		return this.http.post(this.url+"/api/add-comment",comment,{headers:header})
+		.pipe(map(res => {
+			return res;
+		}));
 	}
 	getProfile() {
 		this.loadToken();
@@ -76,9 +76,9 @@ export class AuthService {
 
 		return this.http
 			.get(this.url + "/api/profile", { headers: header ,withCredentials:true})
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	storeUserData(token, user,refresh_token) {
 		if (isPlatformBrowser(this.platformId)) {
@@ -101,9 +101,9 @@ export class AuthService {
 
 		return this.http
 			.put(this.url + "/api/update/image", formData, { headers: headers })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	updateUser(user: any) {
 		this.loadToken();
@@ -113,16 +113,17 @@ export class AuthService {
 
 		return this.http
 			.put(this.url + "/api/update", user, { headers: headers })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	getProfilePic(id): Observable<Blob> {
 		// let header= new HttpHeaders().set('responseType','blob');
 
-		return this.http.get(`/api/${id}`, { responseType: "blob" }).map(res => {
+		return this.http.get(`/api/${id}`, { responseType: "blob" })
+		.pipe(map(res => {
 			return res;
-		});
+		}));
 	}
 
 	isMentor(): boolean {
@@ -140,9 +141,10 @@ export class AuthService {
 
 
 	getMentorDetail(id) {
-		return this.http.get(this.url + `/api/mentor/${id}`).map(res => {
+		return this.http.get(this.url + `/api/mentor/${id}`)
+		.pipe(map(res => {
 			return res;
-		});
+		}));
 	}
 
 	getJobHistory() {
@@ -154,9 +156,9 @@ export class AuthService {
 		});
 		return this.http
 			.get(this.url + "/api/history", { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	getAllHistory() {
@@ -167,15 +169,16 @@ export class AuthService {
 		});
 		return this.http
 			.get(this.url + "/api/history", { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	getSubjects(type: any) {
-		return this.http.get(this.url + `/api/subject/${type}`).map(res => {
+		return this.http.get(this.url + `/api/subject/${type}`)
+		.pipe(map(res => {
 			return res;
-		});
+		}));
 	}
 
 	registerJob(mentor) {
@@ -187,9 +190,9 @@ export class AuthService {
 		});
 		return this.http
 			.post(this.url + `/api/hire`, mentor, { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	resetPassword(email) {
@@ -202,9 +205,9 @@ export class AuthService {
 		//console.log(email)
 		return this.http
 			.post(this.url + "/api/forgot-password", e, { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	updatePassword(user) {
@@ -216,9 +219,9 @@ export class AuthService {
 		});
 		return this.http
 			.post(this.url + "/api/update-password", user, { headers: header })
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 	confirmToken(token) {
 		let header = new HttpHeaders({
@@ -228,9 +231,9 @@ export class AuthService {
 			.post(this.url + "/api/account/password-reset", token, {
 				headers: header
 			})
-			.map(res => {
+			.pipe(map(res => {
 				return res;
-			});
+			}));
 	}
 
 	resendToken(user){
@@ -243,9 +246,20 @@ export class AuthService {
 		.post(this.url +"/api/resend-token",user,{
 			headers:header
 		})
-		.map(res=>{
+		.pipe(map(res => {
 			return res;
+		}));
+	}
+	removeImage(){
+		this.loadToken();
+		console.log(this.authToken);
+		let header = new HttpHeaders({
+			"Authorization" : this.authToken
 		})
+		return this.http.delete(this.url+"/api/delete/image",{headers:header})
+		.pipe(map(res => {
+			return res;
+		}));
 	}
 
 
@@ -263,7 +277,7 @@ export class AuthService {
 				return this.http.get<LoggedUser>(this.url+"/api/refresh-token",{headers:headers}) 
 
 		}
-		return new EmptyObservable();
+		return  EMPTY;
 
 
 	}
@@ -302,7 +316,15 @@ loggedIn() {
 	if (isPlatformBrowser(this.platformId)) {
 		this.loadToken();
 		
-			return this.tokenNotExpired();
+			if(this.tokenNotExpired()){
+				return true;
+			}
+			else if(!this.tokenNotExpired()){
+				return this.refreshToken!==null;
+			}
+			else{
+				return false;
+			}
 		
 		
 		
@@ -319,9 +341,9 @@ logOut() {
 		"X-Refresh-Token":this.refreshToken
 	})
 		return this.http.get(this.url+"/api/logout",{headers:headers}) 
-		.map(res=>{
+		.pipe(map(res => {
 			return res;
-		})
+		}));
 }
 clearStorage(){
 	this.authToken = null;

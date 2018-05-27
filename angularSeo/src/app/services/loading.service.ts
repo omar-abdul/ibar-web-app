@@ -9,13 +9,19 @@ import {
 export class LoadingService {
   onLoadingChanged :EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor() { }
+  constructor() { 
+    
+  }
 
   private requests:HttpRequest<any>[]=[];
 
   onStarted(req:HttpRequest<any>):void{
-    this.requests.push(req);
-    this.notify();
+    
+  
+      this.requests.push(req);
+      this.notify();
+    
+
 
   }
   onFinished(req:HttpRequest<any>):void{
@@ -26,7 +32,10 @@ export class LoadingService {
     this.notify();
   }
   private notify(): void {
-    this.onLoadingChanged.emit(this.requests.length !== 0);
+    let load = false;
+
+
+    this.onLoadingChanged.emit(this.requests.length > 0);
   }
 
 }

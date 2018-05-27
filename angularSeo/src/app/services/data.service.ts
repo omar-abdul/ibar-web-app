@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+// import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+// import {Observable} from 'rxjs/Observable';
+import {Observable, BehaviorSubject, of} from 'rxjs'
 import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
 
 import {map} from 'rxjs/operators'
-import {of} from 'rxjs/observable/of';
 import * as siteWide from "../constants";
 
 @Injectable()
@@ -44,9 +44,10 @@ export class DataService {
   }
   getAllSubjects(){
 	  return this.http.get(this.url+"/api/subjects")
-	  .map(res=>{
-		  return res;
-	  })
+	  .pipe(map(res=>{
+		return res;
+	}))
+
 
   }
   changeReg(isReg:boolean){

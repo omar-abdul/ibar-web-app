@@ -59,6 +59,21 @@
  
 
 }
+.file-upload > input {  
+  position: absolute;
+  opacity: 0;
+}
+
+input,[type=file] + label>button{
+  cursor: pointer;
+  margin: 0;
+  margin-top:10px;
+  padding:10px;
+  width:150px;
+}
+.file-upload label >button:hover{
+  background-color:#345ff9;
+}
 .close
 {
     color: #aaa;

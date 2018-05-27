@@ -1,7 +1,8 @@
 import { Component, OnInit,Output,EventEmitter, Input, ViewChild, ElementRef,OnChanges,SimpleChanges} from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { DataService } from "../../services/data.service";
 import {FormControl} from "@angular/forms";
+import {debounceTime,map} from "rxjs/operators"
 
 
 @Component({
@@ -24,8 +25,8 @@ export class SubjectSearchComponent implements OnInit {
 
   searchSub = (text$: Observable<string>) =>
     text$
-      .debounceTime(200)
-      .map(
+      .pipe(debounceTime(200)
+      ,map(
         term =>
           term === ""
             ? []
@@ -34,7 +35,7 @@ export class SubjectSearchComponent implements OnInit {
                   v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1
                 )
                 .slice(0, 10)
-      );
+      ));
 
   ngOnInit() {
     this.data.currentSubArray.subscribe(sub=>{

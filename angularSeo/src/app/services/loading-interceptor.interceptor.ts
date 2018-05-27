@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/catch'
-import 'rxjs/add/operator/finally';
+import {Observable} from 'rxjs';
+import {map, tap , finalize, catchError} from 'rxjs/operators';
+
 
 
 import {  
@@ -19,9 +17,11 @@ export class LoadingInterceptor implements HttpInterceptor{
     constructor(private loadingService:LoadingService){}
 
     intercept(req:HttpRequest<any>,next:HttpHandler):Observable<HttpEvent<any>>{
+      
         this.loadingService.onStarted(req);
 
-        return next.handle(req).finally(()=> this.loadingService.onFinished(req))
+        return next.handle(req).pipe(
+            finalize(()=> this.loadingService.onFinished(req)))
 
     }
 

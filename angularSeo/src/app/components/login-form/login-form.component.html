@@ -15,7 +15,7 @@
       <span class="input-group-addon">
         <i class="fa fa-envelope" aria-hidden="true"></i>
       </span>
-      <input type="text" class="form-control" [(ngModel)]="email" required minlength="4" name="em" placeholder="you@yourmail.com">
+      <input type="text" [readonly]='isLoading' class="form-control" [(ngModel)]="email" required minlength="4" name="em" placeholder="you@yourmail.com">
     </div>
 
     <br/>
@@ -26,7 +26,7 @@
       <span class="input-group-addon">
         <i class="fa fa-key" aria-hidden="true"></i>
       </span>
-      <input type="password" class="form-control" [(ngModel)]="password" required minlength="8" name="pass" placeholder="Password"
+      <input type="password" [readonly]='isLoading' class="form-control" [(ngModel)]="password" required minlength="8" name="pass" placeholder="Password"
         required minlength="8">
 
 

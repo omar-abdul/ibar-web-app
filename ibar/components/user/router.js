@@ -11,6 +11,7 @@ router.post("/forgot-password", Controller.passwordResetHandler)
 router.post("/account/password-reset", Controller.passConfirmationHandler) 
 router.post("/authenticate-student", Controller.studentLoginHandler)
 router.post("/update-password", Controller.updatePasswordHandler)
+router.delete("/delete/image",Controller.deleteImage)
 
 router.get("/logout",Controller.logOutHandler)
 

@@ -4,12 +4,13 @@ import {
   NavigationStart,
   Event as NavigationEvent
 } from "@angular/router";
-import "rxjs/add/operator/filter";
+
 import { AuthService,LoggedUser } from "../../services/auth.service";
 
-import { Observable } from "rxjs";
-import { TimerObservable } from "rxjs/observable/TimerObservable";
-import 'rxjs/add/operator/takeWhile';
+import { Observable, timer } from "rxjs";
+
+import {takeWhile} from "rxjs/operators"
+;
 
 @Component({
   selector: "app-navbar",
@@ -42,11 +43,12 @@ export class NavbarComponent implements OnInit,OnDestroy {
  
 
     
-      TimerObservable.create(0,this.interval)
-      .takeWhile(()=>this.alive)
+      timer(0,this.interval)
+      .pipe(takeWhile(()=>this.alive))
+
       .subscribe(()=>{
         this.authService.loadToken()
-        if(!this.authService.loggedIn() && (this.authService.refreshToken!==undefined ||
+        if(this.authService.loggedIn() && (this.authService.refreshToken!==undefined ||
         this.authService.refreshToken!==null)){
           this.authService.getrefreshToken()
           .subscribe(data=>{
@@ -77,10 +79,10 @@ export class NavbarComponent implements OnInit,OnDestroy {
   
   onLogOutClick() {
     this.authService.logOut().subscribe(data=>{
-      if(data['success']){
+
         this.authService.clearStorage()
         
-      }
+      
       this.router.navigateByUrl('');
 
     });

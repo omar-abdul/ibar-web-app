@@ -2,6 +2,7 @@ import { Component, OnInit,Input ,ViewChild,EventEmitter,Output} from '@angular/
 import {AuthService} from "../../services/auth.service";
 
 import {CommentService} from "../../services/comment.service";
+import { LoadingService } from '../../services/loading.service';
 
 
 @Component({
@@ -16,10 +17,13 @@ export class RateComponent implements OnInit{
   submitted:boolean=true;
   @Input()mentor:any;
   @Output() newComment = new EventEmitter<any>()
+  isLoading:boolean = false;
  
 
 
-  constructor(private authService:AuthService,private commentService:CommentService) { }
+  constructor(private authService:AuthService,private commentService:CommentService, private ls:LoadingService) {
+    this.ls.onLoadingChanged.subscribe(isLoading=> this.isLoading =isLoading);
+   }
   comments:any[]=[];
 
   ngOnInit() {

@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 // import {FlashMessagesService} from 'ngx-flash-messages';
 import { ValidateService } from "../../services/validate.service";
 import { LoadingService } from "../../services/loading.service";
-import {Observable} from "rxjs/Observable";
+
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -13,7 +13,7 @@ import {Observable} from "rxjs/Observable";
 export class LoginComponent implements OnInit {
   email: any;
   password: String;
-  returnUrl: Observable<string>;
+ 
   validated: boolean;
   authenticated: boolean;
   message: any;

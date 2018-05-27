@@ -58,6 +58,7 @@ export class MentorRegisterFormComponent implements OnInit {
   get subject() {return this.registerForm.get('subject'); }
 
   ngOnInit() {
+    
     this.data.currentSubArray.subscribe(data=>{
       if(!data){return;}
       this.subArr = data.slice(0,data.length);
@@ -76,6 +77,8 @@ export class MentorRegisterFormComponent implements OnInit {
 
   onRegisterSubmit() {
     this.mentor = this.registerForm.value;
+    this.registerForm.disable()
+    
     const user = {
       name: this.mentor.name,
       city_name:this.mentor.city_name,
@@ -123,6 +126,7 @@ export class MentorRegisterFormComponent implements OnInit {
         }
         else {this.message = data['msg']}
       }
+      this.registerForm.enable();
     })
 
 

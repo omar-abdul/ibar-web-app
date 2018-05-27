@@ -1,5 +1,6 @@
 import { Injectable, PLATFORM_ID, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
+
 
 import * as siteWide from "../constants";
 
@@ -13,14 +14,14 @@ export class CommentService {
 
   constructor(private http:HttpClient) { }
   getAllComments(id){
-    return this.http.get(this.url + `/api/comments/${id}`).map(res => {
+    return this.http.get(this.url + `/api/comments/${id}`).pipe(map(res => {
       return res;
-    });
+    }));
   }
   getRate(id){
-    return this.http.get(this.url+`/api/star-rate/${id}`).map(res=>{
+    return this.http.get(this.url+`/api/star-rate/${id}`).pipe(map(res => {
       return res;
-    })
+    }));
   }
 
 }

@@ -8,10 +8,9 @@ import {
   ElementRef,
   AfterViewChecked
 } from "@angular/core";
-import {Observable} from 'rxjs/Observable';
+
 import {map} from 'rxjs/operators';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
+
 
 
 import { DataService } from "../../services/data.service";
@@ -202,7 +201,7 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
     this.mentors = [];
     return this.locationservice
     .getNearbyMentors(lng, lat,subject)
-    .map(data => {
+    .pipe(map(data => {
 
       if (data['success']) {
         data["res"].forEach(async (i, index, array) => {
@@ -238,7 +237,7 @@ export class FindMentorsComponent implements OnInit, AfterViewChecked {
         
       }
       // else{console.log(data['res'])}
-    });
+    }));
 
   }
 

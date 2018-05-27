@@ -25,7 +25,7 @@ export class JobHistoryComponent implements OnInit {
       if (data["success"]) {
         this.jobs = data['job'].slice();         
       }
-      console.log(this.jobs);
+     
 
       if(!Array.isArray(this.jobs) || !this.jobs.length){
         this.isHistory = false;

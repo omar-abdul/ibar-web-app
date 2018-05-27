@@ -66,7 +66,8 @@ import { ProfileCardComponent } from './components/profile-card/profile-card.com
 import { ProfileInfoComponent } from './components/profile-info/profile-info.component';
 import { JobHistoryComponent } from './components/job-history/job-history.component';
 
-import { SubjectCardComponent } from './components/subject-card/subject-card.component'
+import { SubjectCardComponent } from './components/subject-card/subject-card.component';
+import { EditformComponent } from './components/editform/editform.component'
 
 enableProdMode();
 
@@ -130,7 +131,9 @@ const appRoutes:Routes=[{path:'',component:HomeComponent},
     ProfileInfoComponent,
     JobHistoryComponent,
     
-    SubjectCardComponent  
+    SubjectCardComponent,
+    
+    EditformComponent  
    
   ],
   imports: [

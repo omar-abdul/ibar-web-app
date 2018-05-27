@@ -9,100 +9,45 @@
       {{message}}
     </div>
   </div>
-  <div class="profile">
 
-
-    <div class="pic" *ngIf="!imageurl">
-
-
-      {{user?.initial}}
-
-    </div>
-
-    <img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
-
-
-
-
-
-
-
-
-    <ng-container *ngIf="authService.isMentor()">
-      <div style="display: inline-flex;">
-        <input id="fileInput" class="file-upload" type="file" #fileInput class="form-control">
-      </div>
-      <button class="btn submit-btn" (click)="upload()">Upload </button>
-    </ng-container>
-
-    <div></div>
-    <div class="profile-info">
-      <ng-template #rt let-r="result" let-t="term">
-        {{ r.name}}
-      </ng-template>
-      <form [formGroup]="editForm" novalidate enctype="multipart/form-data">
-
-
-
-
-        <div class="form-group">
-          <ng-container *ngIf="authService.isMentor()">
-            <h2> About </h2>
-            <textarea #about class="form-control" cols="30" rows="5">{{user?.about}}</textarea>
-          </ng-container>
-          <h2> Phone Number </h2>
-          <div class="input-group">
-
-
-            <span class="input-group-addon">
-              <i #code>+252</i>
-            </span>
-            <input class="form-control" #phoneNumber formControlName="phoneNumber" placeholder="6344444">
+  <div class="row">
+    <div class="col-sm-4">
+        <div class="pic" *ngIf="!imageurl">
+            {{user?.initial}}
           </div>
+          <img *ngIf='imageurl' class="center-cropped" [src]="imageurl" width="200" height="200" style="border-radius: 50%">
+      
 
+        <ng-container *ngIf="authService.isMentor()">
+            <div class="file-upload">
 
-          <ng-container *ngIf="authService.isMentor()">
-            <h2> City </h2>
-            <city-search [city]="user?.city_name" (cityEvent)='getCity($event)'></city-search>
+        
+            
+            <input id ="file-input"  (change)='upload($event)' type="file" #fileInput>
+            <label for = "file-input" >
+                <button   class="btn btn-primary" >Upload photo</button> 
+              </label>
+          </div>
+          <button (click)='removePhoto()'class='btn btn-link'>Remove photo</button>
+          
+        </ng-container>
+      
 
-
-            <h2>Subjects</h2>
-            <p>
-              <a class="edit" (click)="showField=!showField"> Add Subject </a>
-            </p>
-            <ng-template #rt let-r="result" let-t="term">
-              
-              {{r.name}}
-            </ng-template>
-            <ng-container *ngIf="showField">
-                <subject-search (subjectEvent)='getSubject($event)'></subject-search>
-            </ng-container>
-
-            <div *ngFor="let sub of user?.subjects" class="profile-subject">
-              {{sub}}
-              <span class="close" (click)="deleteSubject(sub)">&times;</span>
+          
+    </div>
+    <hr/>
+    <div class="col-sm-8">
+        <div class="card mb-5">
+            <div class="card-body">
+                <edit-form *ngIf ='user' [user]='user'></edit-form>
             </div>
-          </ng-container>
-
-
-
-        </div>
-
-        <button type="button" (click)="updateUser()" class="btn btn-primary">Save</button>
-        <a routerLink="/profile" class="btn btn-danger">Cancel</a>
-        <div *ngIf="isLoading" class="text-center" style="z-index: 9999">
-          <img class="middle-rolling" src="/assets/images/Rolling.gif">
-        </div>
-
-
-
-
-
-
-      </form>
+          
+          </div>
     </div>
   </div>
+
 </div>
+
 <div *ngIf="updated && success" class="alert alert-success">
   <div class="text-center">
     {{message}}

@@ -3,7 +3,6 @@ import { AuthService } from "../../services/auth.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ValidateService } from "../../services/validate.service";
 import { LoadingService } from "../../services/loading.service";
-import { Observable } from "rxjs/Observable";
 
 @Component({
   selector: 'app-student-login',

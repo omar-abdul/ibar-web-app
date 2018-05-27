@@ -55,6 +55,7 @@ export class RegisterFormComponent implements OnInit {
 
   onRegisterSubmit() {
     this.student = this.registerForm.value;
+    this.registerForm.disable();
    
     this.authService.registerUser(this.student)
     .subscribe(data=>{
@@ -70,12 +71,13 @@ export class RegisterFormComponent implements OnInit {
         this.statusOk= false;
         this.message = '';
         if(data['msg'] instanceof Array){
-          for(let i in data['msg']){
+          for(let i of data['msg']){
             this.message+=i['msg']+' \n';
           }
         }
         else {this.message = data['msg']}
       }
+      this.registerForm.enable();
     })
 
 

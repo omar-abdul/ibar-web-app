@@ -1,0 +1,33 @@
+.profile-subject
+{
+  background-color: #c82333;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 10px;
+  border-radius:20px;
+  margin: 20px 10px 20px 10px; 
+  
+ 
+
+}
+.close
+{
+    color: #aaa;
+    float: right;
+    font-size: 15px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.image-upload > input {
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}

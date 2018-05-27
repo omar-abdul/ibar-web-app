@@ -209,6 +209,7 @@ module.exports.updateUserHandler = [
   util.asynMiddleWare(async function(req, res, next) {
     var errors = validationResult(req);
     let subjects = req.body.subjects;
+    
 
     if (!errors.isEmpty()) {
       res.json({
@@ -250,6 +251,25 @@ module.exports.updateUserHandler = [
     }
   })
 ];
+
+module.exports.deleteImage = [
+  
+  passport.authenticate("jwt", {
+    session: false
+  }),
+  util.asynMiddleWare(async function(req ,res, next){
+    const id = req.user.id;
+    const url= User.updateImageUrl(id,null);
+    const img = util.deleteImage(id);
+
+    res.json({
+      success:true
+    })
+
+
+
+  })
+]
 
 module.exports.addJobHandler = [
   passport.authenticate("jwt", {
@@ -589,10 +609,9 @@ module.exports.reauthenticateMiddleware = async function(req, res, next) {
 };
 
 module.exports.logOutHandler =[
-  passport.authenticate("jwt",{session:false}),
  async function(req,res,next){
  const ref_token = req.header('X-Refresh-Token');
- const del = await User.deleteRefreshTk(req.user.id);
+ const del = await User.deleteRefreshTk(ref_token);
  if(del.rowCount > 0 ){
    res.json({
      success:true

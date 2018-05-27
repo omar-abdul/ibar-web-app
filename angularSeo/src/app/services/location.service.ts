@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Response,URLSearchParams} from '@angular/http';
 
 import {HttpClient,HttpHeaders,HttpParams} from '@angular/common/http'
-
+import { map } from "rxjs/operators";
 import * as siteWide from '../constants';
 
 
@@ -22,7 +22,9 @@ export class LocationService {
     }
 
        return this.http.get(this.url+'/api/find-mentors',{params:params})
-    .map(res =>{ return  res;});
+       .pipe(map(res => {
+				return res;
+			}));;
   }
 
 }

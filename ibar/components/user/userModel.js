@@ -198,10 +198,10 @@ module.exports.updateVerificationStatus = async function (id){
 module.exports.updateUser = async function (id,user,subjects,role){
 
   const client = await pool.connect();
-  const f_query = "UPDATE users SET phone_number = $1 WHERE id = $2 RETURNING id";
+  const f_query = "UPDATE users SET phone_number = $1 , name =$2 WHERE id = $3 RETURNING id";
 
   try{
-    const f = await client.query(f_query,[user.phoneNumber,id]);
+    const f = await client.query(f_query,[user.phoneNumber,user.name,id]);
   
     return f.rows[0].id;
   }catch(e){
@@ -285,12 +285,12 @@ module.exports.addJob = async function (mentor, student){
   }
 
 }
-module.exports.deleteRefreshTk=async function(id){
+module.exports.deleteRefreshTk=async function(tk){
   const client = await pool.connect();
 
-  const query = `UPDATE users SET refresh_token = NULL  WHERE id=$1`;
+  const query = `UPDATE users SET refresh_token = NULL  WHERE refresh_token=$1`;
   try{
-    const results = await client.query(query,[id]);
+    const results = await client.query(query,[tk]);
     return results;
   }catch(e){
     throw new DatabaseError("There was an error connecting or querying the database : "+ e.message);
